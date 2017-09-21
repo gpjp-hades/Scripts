@@ -1,11 +1,6 @@
 serverAddress="keombre.carek.eu/gpjp"
 
-function sendRequest() {
-    #Needed to build token and is not installed by default:
-    {
-        sudo apt-get install net-tools -y
-    } &> /dev/null
-    
+function sendRequest() {  
     myToken=$( echo $( sudo dmidecode -t 4 | grep ID | sed 's/.*ID://;s/ //g' ) | sha256sum | awk '{print $1}' )
 
     echo "Enter name for this PC:"
