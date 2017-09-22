@@ -9,9 +9,11 @@
 configFilePath="gpjp-startup-cfg.sh"
 #Location of the repository
 repository="git://github.com/keombre/gpjp-config.git"
+logFile=""
 
 function myEcho() {
-    scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    scriptLocation="startup.sh"
     if [ "$logFile" == "" ] ; then
         echo $scriptLocation": "$1 >> /tmp/gpjp-config-unconfigured.log
         echo $scriptLocation": "$1

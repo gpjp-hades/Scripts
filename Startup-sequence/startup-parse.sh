@@ -8,9 +8,12 @@
 #==============================================================================
 
 name=""
+logFile=""
 
 function myEcho() {
-    scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    
+    #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    scriptLocation="startup-parse.sh"
     if [ "$logFile" == "" ] ; then
         echo $scriptLocation": "$1 >> /tmp/gpjp-config-unconfigured.log
         echo $scriptLocation": "$1
