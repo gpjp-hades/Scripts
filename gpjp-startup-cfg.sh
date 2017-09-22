@@ -24,3 +24,5 @@ updaterRunPriority=90
 # updaterRunlevel < runlevel < 6
 runlevel=5
 runPriority=90
+
+serverAddress="keombre.carek.eu/gpjp"

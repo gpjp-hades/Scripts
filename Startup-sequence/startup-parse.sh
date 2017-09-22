@@ -7,6 +7,8 @@
 #notes           :
 #==============================================================================
 
+name=""
+
 function myEcho() {
     scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     if [ "$logFile" == "" ] ; then
@@ -28,12 +30,18 @@ function loadConfig() {
 
     if [ ! -x /tmp/gpjp-config/localSettings.sh ] ; then
         myEcho "Could not find local config so passing empty name!"
-        name=""
     else
         source /tmp/gpjp-config/localSettings.sh
     fi
 
     name="${name//' '/%20}"
+}
+
+function downloadInstructions() {
+    myToken=$( echo $( sudo dmidecode -t 4 | grep ID | sed 's/.*ID://;s/ //g' ) \
+    | sha256sum | awk '{print $1}' )
+
+    myEcho "Name is: "$name
 
     request=$serverAddress"/api.php?token="$myToken"&name="$name
     
@@ -42,12 +50,6 @@ function loadConfig() {
 
     response=$(curl $request)
     myEcho "Response was: "$response
-}
-
-function downloadInstructions() {
-    myToken=$( echo $( sudo dmidecode -t 4 | grep ID | sed 's/.*ID://;s/ //g' ) \
-    | sha256sum | awk '{print $1}' )
-
 }
 
 
