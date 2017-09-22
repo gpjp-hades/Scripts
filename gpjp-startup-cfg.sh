@@ -10,8 +10,7 @@
 #   Global variables:   #
 #########################
 
-#Location of the repository
-repository="git://github.com/keombre/gpjp-config.git"
+
 #Local path to output log file
 logFile="/tmp/gpjp-startup.log"
 
@@ -19,8 +18,9 @@ logFile="/tmp/gpjp-startup.log"
 #   Startup variables:  #
 #########################
 
-updaterRunlevel=0
+# 1 < updaterRunLevel < $runlevel
+updaterRunlevel=4
 updaterRunPriority=90
-
+# updaterRunlevel < runlevel < 6
 runlevel=5
 runPriority=90
