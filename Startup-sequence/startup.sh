@@ -20,7 +20,21 @@ function myEcho() {
     fi
 }
 
+function waitForInternet() {
+    count=100
+    while ! ping -c 1 -W 1 8.8.8.8; do
+        sleep 1
+        count=$(($count - 1))
+        if [ $count -lt 0 ] ; then
+            myEcho "Could not connect to the internet! Update script terminating!"
+            exit -1
+        fi
+    done
+}
+
 function loadConfig() {
+    waitForInternet
+    
     #Is git installed?
     if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ];
     then
@@ -71,20 +85,20 @@ function updateRunlevels() {
         #Something about RUN changed!
         deleteUpdaterRunLinks
         createUpdaterRunLink $target
-    else 
+    else
         myEcho "Run has not been changed"
     fi
 }
 
 function updateScript() {
-    diff /etc/init.d/gpjp-startup-updater.sh /tmp/gpjp-config/Startup-sequence/startup-updater.sh
+    cmp /etc/init.d/gpjp-startup-updater.sh /tmp/gpjp-config/Startup-sequence/startup-updater.sh -s
     if [ $? -ne 0 ] ; then
         sudo cp /tmp/gpjp-config/Startup-sequence/startup-updater.sh /etc/init.d/gpjp-startup-updater.sh
         myEcho "Loading new version of startup-updater.sh"
-    else 
+    else
         myEcho "startup-updater.sh is up to date"
     fi
-
+    
     sudo chmod 755 /etc/init.d/gpjp-startup-updater.sh
 }
 
@@ -92,7 +106,6 @@ function updateUpdater() {
     updateScript
     updateRunlevels
 }
-
 
 loadConfig
 

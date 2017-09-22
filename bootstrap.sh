@@ -45,7 +45,7 @@ else
     exit -4;
 fi
 
-echo "Copying startup scripts to: /etc/init.d/gpjp-startup.sh"
+echo "Copying startup scripts to: /etc/init.d/"
 sudo cp /tmp/gpjp-startup/Startup-sequence/startup.sh /etc/init.d/gpjp-startup.sh
 sudo chmod 755 /etc/init.d/gpjp-startup.sh
 sudo cp /tmp/gpjp-startup/Startup-sequence/startup-updater.sh /etc/init.d/gpjp-startup-updater.sh
@@ -71,13 +71,13 @@ if [ $? -ne 0 ]; then
     exit -3
 fi
 
-updater-target="/etc/rc"$updaterRunlevel".d/S"$updaterRunPriority"gpjp-startup-updater.sh"
+updaterTarget="/etc/rc"$updaterRunlevel".d/S"$updaterRunPriority"gpjp-startup-updater.sh"
 #Clean up any previously set symlink:
-sudo rm -f $target
+sudo rm -f $updaterTarget
 
 #Create symlink to runlevel
-echo "Creating symlink at: "$target
-sudo ln -s /etc/init.d/gpjp-startup-updater.sh $target
+echo "Creating symlink at: "$updaterTarget
+sudo ln -s /etc/init.d/gpjp-startup-updater.sh $updaterTarget
 
 #Error check:
 if [ $? -ne 0 ]; then
