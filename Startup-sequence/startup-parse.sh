@@ -55,7 +55,7 @@ function downloadInstructions() {
     response=$( curl -s $request --silent )
     myEcho "Response was: $response"
     
-    firstField=$( echo $response | python -c 'import sys, json; print json.load(sys.stdin)["success"]' )
+    firstField=$( echo $response | python -c 'import sys, json; print json.load(sys.stdin)["result"]' )
     
     #Is it the first time it has registered?
     if [ "$firstField" == "request pending" ] ; then
