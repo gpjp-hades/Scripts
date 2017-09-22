@@ -12,6 +12,15 @@ if [ "$EUID" -ne 0 ] ; then
     exit -10
 fi
 
+echo "Welcome to the HADES system installation, do you really want to install HADES and it's components? (Y/N)"
+read result
+if [ "$result" == "Y" ] || [ "$result" == "y" ] ; then
+    echo "Alright, let's do it!"
+else
+    echo "Stopping!"
+    exit 0
+fi
+
 startupRepository="git://github.com/keombre/gpjp-config.git"
 configFilePath="gpjp-startup-cfg.sh"
 
