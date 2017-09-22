@@ -8,11 +8,10 @@
 #==============================================================================
 
 name=""
-logFile="/tmp/gpjp-startup.log"
+logFile="/tmp/gpjp-startup2.log"
 
 
 function myEcho() {
-    
     #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     scriptLocation="startup-parse.sh"
     if [ "$logFile" == "" ] ; then
@@ -84,6 +83,7 @@ function parseInstructions() {
     #We will probably need an application to manage these config files, so user does not have to add timestamp by hand every time.
     #time in seconds since epoch will be used as an timestamp. Command to get this in bash is:
     # date +%s
+    return
 }
 
 loadConfig
