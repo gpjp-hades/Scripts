@@ -5,8 +5,9 @@
 #version         :0.2
 #notes           :
 #==============================================================================
-logFile="/tmp/gpjp-startup.log"
 
+#This is being overwriten by config file on GIT
+logFile="/tmp/gpjp-startup.log"
 
 function myEcho() {
     #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

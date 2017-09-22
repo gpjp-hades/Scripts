@@ -9,6 +9,7 @@
 configFilePath="gpjp-startup-cfg.sh"
 #Location of the repository
 repository="git://github.com/keombre/gpjp-config.git"
+#This is being overwriten by config file on GIT
 logFile="/tmp/gpjp-startup.log"
 
 function myEcho() {
@@ -128,5 +129,4 @@ myEcho "Parse script returned: "$?
 sleep 10
 
 #Clean up:
-#FIXME: UNCOMMENT
-#sudo rm -rf /tmp/gpjp-config
+sudo rm -rf /tmp/gpjp-config
