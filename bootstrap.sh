@@ -141,3 +141,5 @@ setName
 echo "Startup script all set!"
 echo "Cleaning up..."
 sudo rm -rf /tmp/gpjp-config
+
+echo "DONE!"
