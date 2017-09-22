@@ -1,3 +1,11 @@
+This is part of a project: 
+    SYSTEM HADES
+
+To install HADES to your computer, run bootstrap.sh as root
+
+HADES is an update system for multiple Ubuntu-based Linux machines.
+
+
 Modification of runlevels process:
 
 If runlevels specified in /opt/gpjp-config/gpjp-startup-cfg.sh 
