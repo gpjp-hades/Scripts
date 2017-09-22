@@ -39,8 +39,10 @@ if [ $? -ne 0 ]; then
     exit -2
 fi
 
-#Create symlink to runlevel
 target="/etc/rc"$runlevel".d/S"$runPriority"gpjp-startup.sh"
+#Clean up any previously set symlink:
+sudo rm -f $target
+#Create symlink to runlevel
 echo "Creating symlink at: "$target
 sudo ln -s /etc/init.d/gpjp-startup.sh $target
 
