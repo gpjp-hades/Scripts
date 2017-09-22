@@ -91,9 +91,38 @@ function loadConfig() {
     fi
 }
 
+function setName() {
+    if [ -x /opt/gpjp-config/localSettings.sh ] ; then
+        source /opt/gpjp-config/localSettings.sh
+        echo "Name of this machine is: "$name
+        return
+    fi
+    
+    if [ $# -lt 1 ] ; then
+        echo "Enter name for this PC:"
+        read name
+    else
+        name=$1
+    fi
+    
+    echo "Name is: "$name
+    if [ ! -d /opt/gpjp-config ] ; then
+        sudo mkdir /opt/gpjp-config
+    fi
+    
+    if [ ! -f /opt/gpjp-config/localSettings.sh ] ; then
+        sudo echo "name=\""$name"\"" > /opt/gpjp-config/localSettings.sh
+    fi
+    
+    if [ ! -x /opt/gpjp-config/localSettings.sh ] ; then
+        sudo chmod 755 /opt/gpjp-config/localSettings.sh
+    fi
+}
+
 loadConfig
 copyScripts
 setupLinks
+setName
 
 echo "Startup script all set!"
 echo "Cleaning up..."
