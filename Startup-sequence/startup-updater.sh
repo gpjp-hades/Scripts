@@ -6,4 +6,19 @@
 #notes           :
 #==============================================================================
 
-echo "I am here!2"
+function myEcho() {
+    scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    if [ "$logFile" == "" ] ; then
+        echo $scriptLocation": "$1 >> /tmp/gpjp-config-unconfigured.log
+        echo $scriptLocation": "$1
+    else
+        echo $scriptLocation": "$1 >> $logFile
+        echo $scriptLocation": "$1
+    fi
+}
+
+#Does /opt/gpjp-config exist?
+if [ ! -d /opt/gpjp-config ] ; then
+    myEcho "/opt/gpjp-config not found!";
+    exit -1;
+fi

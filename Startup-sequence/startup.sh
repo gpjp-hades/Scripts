@@ -11,12 +11,13 @@ configFilePath="gpjp-startup-cfg.sh"
 repository="git://github.com/keombre/gpjp-config.git"
 
 function myEcho() {
+    scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     if [ "$logFile" == "" ] ; then
-        echo "startup.sh: "$1 >> /tmp/gpjp-config-error.log
-        echo "!! startup.sh: "$1
+        echo $scriptLocation": "$1 >> /tmp/gpjp-config-unconfigured.log
+        echo $scriptLocation": "$1
     else
-        echo "startup.sh: "$1 >> $logFile
-        echo "startup.sh: "$1
+        echo $scriptLocation": "$1 >> $logFile
+        echo $scriptLocation": "$1
     fi
 }
 
