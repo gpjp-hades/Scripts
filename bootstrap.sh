@@ -7,6 +7,11 @@
 #notes           :Needs the structure of startup repository: gpjp-startup/Startup-sequence
 #=============================================================================
 
+if [ "$EUID" -ne 0 ] ; then
+    echo "ERROR: Please run this script as root!!"
+    exit -10
+fi
+
 startupRepository="git://github.com/keombre/gpjp-config.git"
 configFilePath="gpjp-startup-cfg.sh"
 

@@ -66,10 +66,10 @@ function downloadInstructions() {
         eval "$1='$config'"
         return
         elif [ "$firstField" == "invalid request" ] ; then
-        myEcho "Server did not approve this request! This machine may be doomed!!!! Response was: $response"
+        myEcho "ERROR: Server did not approve this request! This machine may be doomed!!!! Response was: $response"
         exit -1
     else
-        myEcho "There has been an error communicating with the server! Response was: $response"
+        myEcho "ERROR: There has been an error communicating with the server! Response was: $response"
         exit -2
     fi
 }
