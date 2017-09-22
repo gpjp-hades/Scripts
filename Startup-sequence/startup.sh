@@ -9,7 +9,7 @@
 configFilePath="gpjp-startup-cfg.sh"
 #Location of the repository
 repository="git://github.com/keombre/gpjp-config.git"
-logFile=""
+logFile="/tmp/gpjp-startup.log"
 
 function myEcho() {
     #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -24,6 +24,7 @@ function myEcho() {
 }
 
 function waitForInternet() {
+    myEcho "Waiting for internet:"
     count=100
     while ! ping -c 1 -W 1 8.8.8.8; do
         sleep 1
@@ -31,8 +32,11 @@ function waitForInternet() {
         if [ $count -lt 0 ] ; then
             myEcho "Could not connect to the internet! Update script terminating!"
             exit -1
+        else
+            myEcho "Pinging..."
         fi
     done
+    myEcho "Connected!"
 }
 
 function loadConfig() {

@@ -8,7 +8,8 @@
 #==============================================================================
 
 name=""
-logFile=""
+logFile="/tmp/gpjp-startup.log"
+
 
 function myEcho() {
     
