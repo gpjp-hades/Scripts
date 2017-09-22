@@ -74,10 +74,10 @@ function parseInstructions() {
     #Instructions are saved in $1
     
     #TODO: COMPLETE!
-
+    
     #I think that one-time carry out instructions should be labeled by ID... This ID will be timeStamp of creation of command. Each computer will hold a list of ID's that it had carried out already. Any new one will be carried out.
     #This allows admin to enter one-time carry out instruction multiple times, even after it had been carried out.
-    #We will probably need an application to manage these config files, so user does not have to add timestamp by hand every time. 
+    #We will probably need an application to manage these config files, so user does not have to add timestamp by hand every time.
     #time in seconds since epoch will be used as an timestamp. Command to get this in bash is:
     # date +%s
 }
