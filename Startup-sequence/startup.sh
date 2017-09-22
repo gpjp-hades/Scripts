@@ -122,4 +122,5 @@ myEcho "Parse script returned: "$?
 sleep 10
 
 #Clean up:
-sudo rm -rf /tmp/gpjp-config
+#FIXME: UNCOMMENT
+#sudo rm -rf /tmp/gpjp-config

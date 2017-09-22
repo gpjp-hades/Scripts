@@ -30,10 +30,10 @@ function loadConfig() {
 }
 
 function downloadInstructions() {
-    if [ ! -x /tmp/gpjp-config/localSettings.sh ] ; then
+    if [ ! -x /opt/gpjp-config/localSettings.sh ] ; then
         myEcho "Could not find local config so passing empty name!"
     else
-        source /tmp/gpjp-config/localSettings.sh
+        source /opt/gpjp-config/localSettings.sh
     fi
     
     name="${name//' '/%20}"
@@ -48,15 +48,36 @@ function downloadInstructions() {
     myEcho "My token is: $myToken"
     myEcho "Sending request: $request"
     
-    response=$(curl $request)
-    myEcho "Response was: "$response
-
-    firstField=$(echo $response | python -c 'import sys, json; print json.load(sys.stdin)["success"]')
-    myEcho "First field: "$firstField
+    response=$( curl -s $request --silent )
+    myEcho "Response was: $response"
+    
+    firstField=$( echo $response | python -c 'import sys, json; print json.load(sys.stdin)["success"]' )
+    
+    #Is it the first time it has registered?
+    if [ "$firstField" == "request pending" ] ; then
+        myEcho "Nothing to do! Waiting for admin to approve this machine in system"
+        exit 1
+        elif [ "$firstField" == "approved" ] ; then
+        config=$( echo $response | python -c 'import sys, json; print json.load(sys.stdin)["config"]' )
+        eval "$1='$config'"
+        return
+        elif [ "$firstField" == "invalid request" ] ; then
+        myEcho "Server did not approve this request! This machine may be doomed!!!! Response was: $response"
+        exit -1
+    else
+        myEcho "There has been an error communicating with the server! Response was: $response"
+        exit -2
+    fi
 }
 
+function parseInstructions() {
+    #Instructions are saved in $1
+    
+    #TODO: COMPLETE!
+}
 
 loadConfig
 instructions=""
 downloadInstructions instructions
-myEcho "Instructions are: "$instructions
+myEcho "Instructions are: $instructions"
+parseInstructions instructions
