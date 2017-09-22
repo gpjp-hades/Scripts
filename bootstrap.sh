@@ -37,7 +37,7 @@ fi
 
 #Load config:
 echo "Loading config file..."
-if [ -x /tmp/gpjp-startup/$configFilePath ]; then
+if [ -x "/tmp/gpjp-startup/"$configFilePath ]; then
     /tmp/gpjp-startup/$configFilePath;
     echo "Config file loaded!";
 else
