@@ -5,11 +5,10 @@
 #version         :0.1
 #usage		     :bash bootstrap.sh
 #notes           :Needs the structure of startup repository: gpjp-startup/Startup-sequence
-#==============================================================================
+#=============================================================================
 
-runlevel=5
-runPriority=90
 startupRepository="git://github.com/keombre/gpjp-config.git"
+configFilePath="gpjp-startup-cfg.sh"
 
 #Is git installed?
 if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ];
@@ -23,7 +22,7 @@ fi
 #Clean the directory:
 sudo rm -rf /tmp/gpjp-startup
 
-#Clone repository:
+#Clone repository (read-only):
 git clone $startupRepository /tmp/gpjp-startup
 
 #Whitespace:
@@ -33,6 +32,17 @@ printf "\n\n";
 if [ $? -ne 0 ]; then
     echo "There was an error while cloning repository!"
     exit -1
+fi
+
+
+#Load config:
+echo "Loading config file..."
+if [ -x /tmp/gpjp-startup/$configFilePath ]; then
+    /tmp/gpjp-startup/$configFilePath;
+    echo "Config file loaded!";
+else
+    echo "Error: Config file not found!";
+    exit -4;
 fi
 
 echo "Copying startup script to: /etc/init.d/gpjp-startup.sh"
