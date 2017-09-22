@@ -26,8 +26,6 @@ function loadConfig() {
     then
         myEcho "Git not found, fixing: ";
         sudo apt-get install git -y;
-    else
-        myEcho "Git found!";
     fi
     
     #Clean the directory:
@@ -37,7 +35,6 @@ function loadConfig() {
     git clone $repository /tmp/gpjp-config
     
     #Load config:
-    myEcho "Loading config file..."
     if [ -x "/tmp/gpjp-config/"$configFilePath ]; then
         source /tmp/gpjp-config/$configFilePath;
         if [ ! -d /opt/gpjp-config ] ; then
@@ -74,6 +71,8 @@ function updateRunlevels() {
         #Something about RUN changed!
         deleteUpdaterRunLinks
         createUpdaterRunLink $target
+    else 
+        myEcho "Run has not been changed"
     fi
 }
 
@@ -82,6 +81,8 @@ function updateScript() {
     if [ $? -ne 0 ] ; then
         sudo cp /tmp/gpjp-config/Startup-sequence/startup-updater.sh /etc/init.d/gpjp-startup-updater.sh
         myEcho "Loading new version of startup-updater.sh"
+    else 
+        myEcho "startup-updater.sh is up to date"
     fi
 
     sudo chmod 755 /etc/init.d/gpjp-startup-updater.sh
