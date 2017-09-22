@@ -9,21 +9,26 @@
 
 runlevel=5
 runPriority=90
-
-#Download startup.sh from some server (GIT? Our server?) 
-#I assume it will be on git:
-{
-sudo apt-get install git -y
-} &> /dev/null
-#Curl way:
-#startupRepository="https://codeload.github.com/keombre/gpjp-config/zip/master"
-#curl -L $startupRepository> /tmp/startupRepository.zip
-#Git way:
 startupRepository="git://github.com/keombre/gpjp-config.git"
+
+#Is git installed?
+if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; 
+then 
+    echo "Git not found, fixing: ";
+    sudo apt-get install git -y;
+else
+    echo "Git found!";
+fi
+
 #Clean the directory:
 sudo rm -rf /tmp/gpjp-startup
+
 #Clone repository:
 git clone $startupRepository /tmp/gpjp-startup
+
+#Whitespace:
+printf "\n\n";
+
 #Error check:
 if [ $? -ne 0 ]; then
     echo "There was an error while cloning repository!"
@@ -34,6 +39,7 @@ echo "Copying startup script to: /etc/init.d/gpjp-startup.sh"
 sudo cp /tmp/gpjp-startup/Startup-sequence/startup.sh /etc/init.d/gpjp-startup.sh
 sudo chmod 755 /etc/init.d/gpjp-startup.sh
 
+#Error check:
 if [ $? -ne 0 ]; then
     echo "There was an error while copying startup script to /etc/init.d"
     exit -2
@@ -42,10 +48,12 @@ fi
 target="/etc/rc"$runlevel".d/S"$runPriority"gpjp-startup.sh"
 #Clean up any previously set symlink:
 sudo rm -f $target
+
 #Create symlink to runlevel
 echo "Creating symlink at: "$target
 sudo ln -s /etc/init.d/gpjp-startup.sh $target
 
+#Error check:
 if [ $? -ne 0 ]; then
     echo "There was an error while creating link!"
     exit -3
