@@ -2,7 +2,7 @@
 #title           :startup.sh
 #description     :This script will be executed on boot-sequence and update startup-execute from git repository, then run it
 #author		     :horovtom
-#version         :0.1
+#version         :0.2
 #notes           :This script will take existing gpjp-config clone from gpjp-startup-updater.sh
 #==============================================================================
 
