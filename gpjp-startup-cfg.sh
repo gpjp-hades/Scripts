@@ -19,5 +19,8 @@ logFile="/tmp/gpjp-startup.log"
 #   Startup variables:  #
 #########################
 
+updaterRunlevel=0
+updaterRunPriority=90
+
 runlevel=5
 runPriority=90

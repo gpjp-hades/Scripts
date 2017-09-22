@@ -38,20 +38,22 @@ fi
 #Load config:
 echo "Loading config file..."
 if [ -x "/tmp/gpjp-startup/"$configFilePath ]; then
-    /tmp/gpjp-startup/$configFilePath;
+    source /tmp/gpjp-startup/$configFilePath;
     echo "Config file loaded!";
 else
     echo "Error: Config file not found!";
     exit -4;
 fi
 
-echo "Copying startup script to: /etc/init.d/gpjp-startup.sh"
+echo "Copying startup scripts to: /etc/init.d/gpjp-startup.sh"
 sudo cp /tmp/gpjp-startup/Startup-sequence/startup.sh /etc/init.d/gpjp-startup.sh
 sudo chmod 755 /etc/init.d/gpjp-startup.sh
+sudo cp /tmp/gpjp-startup/Startup-sequence/startup-updater.sh /etc/init.d/gpjp-startup-updater.sh
+sudo chmod 755 /etc/init.d/gpjp-startup-updater.sh
 
 #Error check:
-if [ $? -ne 0 ]; then
-    echo "There was an error while copying startup script to /etc/init.d"
+if [ ! -x /etc/init.d/gpjp-startup.sh ] || [ ! -x /etc/init.d/gpjp-startup-updater.sh ] ; then
+    echo "There was an error while copying startup scripts to /etc/init.d"
     exit -2
 fi
 
@@ -69,6 +71,21 @@ if [ $? -ne 0 ]; then
     exit -3
 fi
 
+updater-target="/etc/rc"$updaterRunlevel".d/S"$updaterRunPriority"gpjp-startup-updater.sh"
+#Clean up any previously set symlink:
+sudo rm -f $target
+
+#Create symlink to runlevel
+echo "Creating symlink at: "$target
+sudo ln -s /etc/init.d/gpjp-startup-updater.sh $target
+
+#Error check:
+if [ $? -ne 0 ]; then
+    echo "There was an error while creating link!"
+    exit -5
+fi
+
+
 echo "Startup script all set!"
-echo "Cleaning up:"
+echo "Cleaning up..."
 sudo rm -rf /tmp/gpjp-config

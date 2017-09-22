@@ -1,0 +1,13 @@
+Modification of runlevels process:
+
+If runlevels specified in /opt/gpjp-config/gpjp-startup-cfg.sh 
+do not match with actual runlevels, startup-updater script will 
+replace links for startup.sh and startup.sh will replace links for
+startup-updater.sh
+
+
+
+Modification of startup.sh or startup-updater.sh process:
+
+They will update each other, just as in the Modification of runlevels process.
+startup-updater will update startup.sh to the one specified in /opt/gpjp-config/
