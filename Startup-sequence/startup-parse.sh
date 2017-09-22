@@ -47,7 +47,7 @@ function downloadInstructions() {
     
     #myEcho "Name is: "$name
     
-    request=$serverAddress"/api.php?token="$myToken"&name="$name
+    request=$serverAddress"/api/"$myToken"/"$name
     
     #myEcho "My token is: $myToken"
     myEcho "Sending request: $request"
