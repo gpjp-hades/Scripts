@@ -6,3 +6,5 @@
 #usage		     :bash startup-parse.sh
 #notes           :
 #==============================================================================
+
+echo "Startup-parse running!"
