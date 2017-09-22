@@ -1,8 +1,8 @@
-#!/bin/bash -       
+#!/bin/bash -
 #title           :bootstrap.sh
 #description     :This script will install startup script into boot sequence of a system.
 #author		     :horovtom
-#version         :0.1    
+#version         :0.1
 #usage		     :bash bootstrap.sh
 #notes           :Needs the structure of startup repository: gpjp-startup/Startup-sequence
 #==============================================================================
@@ -12,8 +12,8 @@ runPriority=90
 startupRepository="git://github.com/keombre/gpjp-config.git"
 
 #Is git installed?
-if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; 
-then 
+if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ];
+then
     echo "Git not found, fixing: ";
     sudo apt-get install git -y;
 else
