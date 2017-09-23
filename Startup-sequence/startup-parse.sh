@@ -101,10 +101,14 @@ function parseInstructions() {
 
 function downloadInstructions() {
     #Is repository set up?
-    git -C /opt/gpjp-hades/Instructions rev-parse
+    {
+        git -C /opt/gpjp-hades/Instructions rev-parse
+    } &> /dev/null
     if [ $? -ne 0 ] ; then
         sudo git clone http://github.com/gpjp-hades/Instructions /opt/gpjp-hades/
-        git -C /opt/gpjp-hades/Instructions rev-parse
+        {
+            git -C /opt/gpjp-hades/Instructions rev-parse
+        } &> /dev/null
         if [ $? -ne 0 ] ; then
             myEcho "ERROR: An error occurred while downloading Instructions repository!"
             exit -100
