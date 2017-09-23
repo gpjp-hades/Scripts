@@ -16,7 +16,7 @@ function myEcho() {
     #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     scriptLocation="startup.sh"
     if [ "$logFile" == "" ] ; then
-        echo $scriptLocation": "$1 >> /tmp/gpjp-config-unconfigured.log
+        echo $scriptLocation": "$1 >> /tmp/hades-unconfigured.log
         echo $scriptLocation": "$1
     else
         echo $scriptLocation": "$1 >> $logFile
@@ -50,20 +50,25 @@ function loadConfig() {
         sudo apt-get install git -y;
     fi
     
+    if [ -d /tmp/gpjp-hades ] ; then
     #Clean the directory:
-    sudo rm -rf /tmp/gpjp-config
+    sudo rm -rf /tmp/gpjp-hades/Scripts
+    else
+    #Create the directory:
+    sudo mkdir /tmp/gpjp-hades
+    fi
     
     #Clone repository:
-    git clone $repository /tmp/gpjp-config
+    git clone $repository /tmp/gpjp-hades/Scripts
     
     #Load config:
-    if [ -x "/tmp/gpjp-config/"$configFilePath ]; then
-        source /tmp/gpjp-config/$configFilePath;
+    if [ -x "/tmp/gpjp-hades/Scripts/"$configFilePath ]; then
+        source /tmp/gpjp-hades/Scripts/$configFilePath;
         if [ ! -d /opt/gpjp-config ] ; then
             sudo mkdir /opt/gpjp-config
         fi
-        cp /tmp/gpjp-config/$configFilePath /opt/gpjp-config/
-        cp /tmp/gpjp-config/Startup-sequence/startup.sh /opt/gpjp-config
+        cp /tmp/gpjp-hades/Scripts/$configFilePath /opt/gpjp-config/
+        cp /tmp/gpjp-hades/Scripts/Startup-sequence/startup.sh /opt/gpjp-config
     else
         myEcho "Error: Config file not found!";
         exit -4;
@@ -99,9 +104,9 @@ function updateRunlevels() {
 }
 
 function updateScript() {
-    cmp /etc/init.d/gpjp-startup-updater.sh /tmp/gpjp-config/Startup-sequence/startup-updater.sh -s
+    cmp /etc/init.d/gpjp-startup-updater.sh /tmp/gpjp-hades/Scripts/Startup-sequence/startup-updater.sh -s
     if [ $? -ne 0 ] ; then
-        sudo cp /tmp/gpjp-config/Startup-sequence/startup-updater.sh /etc/init.d/gpjp-startup-updater.sh
+        sudo cp /tmp/gpjp-hades/Scripts/Startup-sequence/startup-updater.sh /etc/init.d/gpjp-startup-updater.sh
         myEcho "Loading new version of startup-updater.sh"
     else
         myEcho "startup-updater.sh is up to date"
@@ -122,11 +127,11 @@ updateUpdater
 
 #Run startup parse script:
 myEcho "Running parse script"
-sudo /tmp/gpjp-config/Startup-sequence/startup-parse.sh
+sudo /tmp/gpjp-hades/Scripts/Startup-sequence/startup-parse.sh
 
 myEcho "Parse script returned: "$?
 #FIXME: Wait for all async calls (Shouldn't be needed!)
 sleep 10
 
 #Clean up:
-sudo rm -rf /tmp/gpjp-config
+sudo rm -rf /tmp/gpjp-hades/Scripts

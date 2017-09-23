@@ -16,7 +16,7 @@ function myEcho() {
     #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     scriptLocation="startup-parse.sh"
     if [ "$logFile" == "" ] ; then
-        echo $scriptLocation": "$1 >> /tmp/gpjp-config-unconfigured.log
+        echo $scriptLocation": "$1 >> /tmp/hades-unconfigured.log
         echo $scriptLocation": "$1
     else
         echo $scriptLocation": "$1 >> $logFile
@@ -25,15 +25,15 @@ function myEcho() {
 }
 
 function loadConfig() {
-    if [ ! -x /tmp/gpjp-config/gpjp-startup-cfg.sh ] ; then
-        myEcho "Config not found! Maybe you deleted /tmp/gpjp-config ?"
+    if [ ! -x /tmp/gpjp-hades/Scripts/gpjp-startup-cfg.sh ] ; then
+        myEcho "Config not found! Maybe you deleted /tmp/gpjp-hades/Scripts ?"
         exit -1
     fi
     
-    source /tmp/gpjp-config/gpjp-startup-cfg.sh
+    source /tmp/gpjp-hades/Scripts/gpjp-startup-cfg.sh
 }
 
-function downloadInstructions() {
+function downloadInstructionsLoaction() {
     if [ ! -x /opt/gpjp-config/localSettings.sh ] ; then
         myEcho "Could not find local config so passing empty name!"
     else
@@ -55,7 +55,7 @@ function downloadInstructions() {
     response=$( curl -s $request --silent )
 
     if [ "$response" == "" ] ; then
-        myEcho "There has been an error communicating with the server! Curl returned: "$retrunVal
+        myEcho "There has been an error communicating with the server!"
         exit -2
     fi
 
@@ -94,7 +94,10 @@ function parseInstructions() {
 }
 
 loadConfig
-instructions=""
-downloadInstructions instructions
-myEcho "Instructions are: $instructions"
+instructionsLocation=""
+downloadInstructionsLoaction instructionsLocation
+myEcho "Instructions location is: $instructionsLocation"
+#Download instructions:
+
+
 parseInstructions instructions
