@@ -12,7 +12,7 @@
 
 
 #Local path to output log file
-logFile="/tmp/gpjp-startup.log"
+logFile="/tmp/HADES.log"
 
 #########################
 #   Startup variables:  #
