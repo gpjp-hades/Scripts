@@ -117,9 +117,12 @@ function downloadInstructions() {
     fi
     
     #Is it up to date?
+    oldPath=$( pwd )
+    cd /opt/gpjp-hades/Instructions
     git fetch --all
     git reset --hard origin/master
-    
+    cd $oldPath
+
     if [ ! -f /opt/gpjp-hades/$instructionsLocation ] ; then
         myEcho "ERROR: Instructions repository does not contain instructions file: $instructionsLocation"
         exit -4
