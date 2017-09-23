@@ -113,3 +113,5 @@ case "$1" in
 esac
 
 myEcho "--Command Done--"
+myEcho ""
+
