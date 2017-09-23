@@ -64,11 +64,11 @@ function loadConfig() {
     #Load config:
     if [ -x "/tmp/gpjp-hades/Scripts/"$configFilePath ]; then
         source /tmp/gpjp-hades/Scripts/$configFilePath;
-        if [ ! -d /opt/gpjp-config ] ; then
-            sudo mkdir /opt/gpjp-config
+        if [ ! -d /opt/gpjp-hades ] ; then
+            sudo mkdir /opt/gpjp-hades
         fi
-        cp /tmp/gpjp-hades/Scripts/$configFilePath /opt/gpjp-config/
-        cp /tmp/gpjp-hades/Scripts/Startup-sequence/startup.sh /opt/gpjp-config
+        cp /tmp/gpjp-hades/Scripts/$configFilePath /opt/gpjp-hades/
+        cp /tmp/gpjp-hades/Scripts/Startup-sequence/startup.sh /opt/gpjp-hades
     else
         myEcho "Error: Config file not found!";
         exit -4;

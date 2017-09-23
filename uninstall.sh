@@ -26,13 +26,13 @@ function deinstall() {
 
 function removeAll() {
     echo "All right, let's do it!"
-    sudo rm -rf /opt/gpjp-config
+    sudo rm -rf /opt/gpjp-hades
     deinstall
 }
 
 function removePart() {
     echo "All right, let's do it!"
-    sudo find /opt/gpjp-config/ -not -name 'localSettings.sh' -type f -exec rm {} +
+    sudo find /opt/gpjp-hades/ -not -name 'localSettings.sh' -type f -exec rm {} +
     deinstall
 }
 

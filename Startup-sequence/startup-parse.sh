@@ -34,10 +34,10 @@ function loadConfig() {
 }
 
 function downloadInstructionsLoaction() {
-    if [ ! -x /opt/gpjp-config/localSettings.sh ] ; then
+    if [ ! -x /opt/gpjp-hades/localSettings.sh ] ; then
         myEcho "Could not find local config so passing empty name!"
     else
-        source /opt/gpjp-config/localSettings.sh
+        source /opt/gpjp-hades/localSettings.sh
     fi
     
     name="${name//' '/%20}"
@@ -95,10 +95,10 @@ function parseInstructions() {
 
 function downloadInstructions() {
     #Is repository set up?
-    returnVal=git -C /opt/gpjp-config/Instructions rev-parse
+    returnVal=git -C /opt/gpjp-hades/Instructions rev-parse
     if [ $returnVal -ne 0 ] ; then
-        sudo git clone http://github.com/gpjp-hades/Instructions /opt/gpjp-config/
-        returnVal=git -C /opt/gpjp-config/Instructions rev-parse
+        sudo git clone http://github.com/gpjp-hades/Instructions /opt/gpjp-hades/
+        returnVal=git -C /opt/gpjp-hades/Instructions rev-parse
         if [ $returnVal -ne 0 ] ; then
             myEcho "ERROR: An error occurred while downloading Instructions repository!"
             exit -100
@@ -109,7 +109,7 @@ function downloadInstructions() {
     git fetch --all
     git reset --hard origin/master
 
-    if [ ! -f /opt/gpjp-config/$instructionsLocation ] ; then
+    if [ ! -f /opt/gpjp-hades/$instructionsLocation ] ; then
         myEcho "ERROR: Instructions repository does not contain instructions file: $instructionsLocation"
         exit -4
     fi

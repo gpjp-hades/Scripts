@@ -3,7 +3,7 @@
 #description     :This script contains all the settings
 #author		     :horovtom
 #version         :0.1
-#notes           :This file should be located in /opt/gpjp-config/gpjp-startup-cfg.sh. If it is not there, scripts will download latest version from git
+#notes           :This file should be located in /opt/gpjp-hades/gpjp-startup-cfg.sh. If it is not there, scripts will download latest version from git
 #==============================================================================
 
 #########################

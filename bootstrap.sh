@@ -106,8 +106,8 @@ function loadConfig() {
 }
 
 function setName() {
-    if [ -x /opt/gpjp-config/localSettings.sh ] ; then
-        source /opt/gpjp-config/localSettings.sh
+    if [ -x /opt/gpjp-hades/localSettings.sh ] ; then
+        source /opt/gpjp-hades/localSettings.sh
         echo "Name of this machine is: "$name
         return
     fi
@@ -120,16 +120,16 @@ function setName() {
     fi
     
     echo "Name is: "$name
-    if [ ! -d /opt/gpjp-config ] ; then
-        sudo mkdir /opt/gpjp-config
+    if [ ! -d /opt/gpjp-hades ] ; then
+        sudo mkdir /opt/gpjp-hades
     fi
     
-    if [ ! -f /opt/gpjp-config/localSettings.sh ] ; then
-        sudo echo "name=\""$name"\"" > /opt/gpjp-config/localSettings.sh
+    if [ ! -f /opt/gpjp-hades/localSettings.sh ] ; then
+        sudo echo "name=\"$name\"" > /opt/gpjp-hades/localSettings.sh
     fi
     
-    if [ ! -x /opt/gpjp-config/localSettings.sh ] ; then
-        sudo chmod 755 /opt/gpjp-config/localSettings.sh
+    if [ ! -x /opt/gpjp-hades/localSettings.sh ] ; then
+        sudo chmod 755 /opt/gpjp-hades/localSettings.sh
     fi
 }
 

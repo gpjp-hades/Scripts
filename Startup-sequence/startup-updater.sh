@@ -50,9 +50,9 @@ function updateRunlevels() {
 }
 
 function updateScript() {
-    cmp /etc/init.d/gpjp-startup.sh /opt/gpjp-config/startup.sh -s
+    cmp /etc/init.d/gpjp-startup.sh /opt/gpjp-hades/startup.sh -s
     if [ $? -ne 0 ] ; then
-        sudo cp /opt/gpjp-config/startup.sh /etc/init.d/gpjp-startup.sh
+        sudo cp /opt/gpjp-hades/startup.sh /etc/init.d/gpjp-startup.sh
         myEcho "Loading new version of startup.sh"
     else
         myEcho "startup.sh is up to date"
@@ -62,24 +62,24 @@ function updateScript() {
 }
 
 function updateStartup() {
-    #Does /opt/gpjp-config/startup.sh exist?
-    if [ -x /opt/gpjp-config/startup.sh ] ; then
+    #Does /opt/gpjp-hades/startup.sh exist?
+    if [ -x /opt/gpjp-hades/startup.sh ] ; then
         updateScript
     else
         myEcho "Script is not present!"
     fi
     #Does config file exist?
-    if [ -x /opt/gpjp-config/gpjp-startup-cfg.sh ] ; then
-        source /opt/gpjp-config/gpjp-startup-cfg.sh
+    if [ -x /opt/gpjp-hades/gpjp-startup-cfg.sh ] ; then
+        source /opt/gpjp-hades/gpjp-startup-cfg.sh
         updateRunlevels
     else
         myEcho "Config file is not present!"
     fi
 }
 
-#Does /opt/gpjp-config exist?
-if [ ! -d /opt/gpjp-config ] ; then
-    myEcho "/opt/gpjp-config not found!";
+#Does /opt/gpjp-hades exist?
+if [ ! -d /opt/gpjp-hades ] ; then
+    myEcho "/opt/gpjp-hades not found!";
     exit -1;
 fi
 
