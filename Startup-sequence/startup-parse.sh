@@ -87,8 +87,15 @@ function downloadInstructionsLoaction() {
 }
 
 function parseInstructions() {
-    #Instructions are saved in $1
-    
+    instructions=/opt/gpjp-hades/Instructions/$1
+
+    #IFS='' prevents leading/trailing whitespace from being trimmed
+    #-r prevents backslash escapes from being interpreted
+    #|| [[ -n $line ]] prevents the last line from being ignored if it doesn't end with a \n
+    while IFS='' read -r line || [[ -n "$line" ]]; do
+        myEcho "Line: "$line
+    done < "$instructions"
+
     #TODO: COMPLETE!
     
     #I think that one-time carry out instructions should be labeled by ID... This ID will be timeStamp of creation of command. Each computer will hold a list of ID's that it had carried out already. Any new one will be carried out.
@@ -123,7 +130,7 @@ function downloadInstructions() {
     git reset --hard origin/master
     cd $oldPath
 
-    if [ ! -f /opt/gpjp-hades/$instructionsLocation ] ; then
+    if [ ! -f /opt/gpjp-hades/Instructions/$instructionsLocation ] ; then
         myEcho "ERROR: Instructions repository does not contain instructions file: $instructionsLocation"
         exit -4
     fi
