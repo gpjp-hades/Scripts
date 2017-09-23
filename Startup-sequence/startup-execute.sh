@@ -49,9 +49,11 @@ function singleMode() {
     if [[ $? -ne 0 ]] ; then
         local commandToExec=$( echo $1 | cut -d " " -f2- )
         myEcho "Executing $commandToExec"
-        sudo bash -c $commandToExec
+        sudo bash -c "$commandToExec"
 
         addToExecuted $commandID
+    else
+        myEcho "Command $commandID has been already executed on this machine"
     fi
 }
 
