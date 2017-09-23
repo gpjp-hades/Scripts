@@ -58,7 +58,7 @@ function downloadInstructionsLoaction() {
         myEcho "There has been an error communicating with the server! Trying the old standard request: "
         request=$serverAddress"/api.php?token="$myToken"&name="$name
         myEcho "Sending request: $request"
-        response=$( curl -s $reuquest --silent )
+        response=$( curl -s $request --silent )
         if [ "$response" == "" ] ; then
             myEcho "ERROR server unreachable!"
             exit -1
