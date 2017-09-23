@@ -28,9 +28,31 @@ function installMode() {
     sudo apt-get install $1 -y
 }
 
+function addToExecuted() {
+    if [[ ! -f /opt/gpjp-hades/executed.cfg ]] ; then
+        
+}
+
+function alreadyExecuted() {
+
+}
+
 function singleMode() {
     myEcho "Singleing: $1"
-    
+    #Get first word (should be ID)
+    commandID=$( awk '{print $1}' <<< $1 )
+    if [[ -n $commandID =~ ^-?[0-9]+$ ]] ; then
+        myEcho "Wrong syntax for singleMode. Expected ID, got: $commandID"
+        exit -2
+    fi
+    alreadyExecuted $commandID
+    if [[ $? -ne 0 ]] ; then
+        commandToExec=$( echo $1 | cut -d " " -f2- )
+        myEcho "Executing $commandToExec"
+        sudo bash -c $commandToExec
+
+        addToExecuted $commandID
+    fi
 }
 
 function routineMode() {
