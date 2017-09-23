@@ -58,8 +58,8 @@ function singleMode() {
 }
 
 function routineMode() {
-    myEcho "Routining: $1"
-    bash -c "$1"
+    myEcho "Routining: $1 as $defaultUser"
+    sudo su -c "bash -c \"$1\"" $defaultUser
 }
 
 function routineRootMode() {

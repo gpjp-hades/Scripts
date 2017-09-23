@@ -108,7 +108,8 @@ function loadConfig() {
 function setName() {
     if [ -x /opt/gpjp-hades/localSettings.sh ] ; then
         source /opt/gpjp-hades/localSettings.sh
-        echo "Name of this machine is: "$name
+        echo "Name of this machine is: $name"
+        echo "Default user is: $defaultUser"
         return
     fi
     
@@ -120,12 +121,14 @@ function setName() {
     fi
     
     echo "Name is: "$name
+    echo "Default user is: $SUDO_USER"
     if [ ! -d /opt/gpjp-hades ] ; then
         sudo mkdir /opt/gpjp-hades
     fi
     
     if [ ! -f /opt/gpjp-hades/localSettings.sh ] ; then
         sudo echo "name=\"$name\"" > /opt/gpjp-hades/localSettings.sh
+        sudo echo "defaultUser=\"$SUDO_USER\"" >> /opt/gpjp-hades/localSettings.sh
     fi
     
     if [ ! -x /opt/gpjp-hades/localSettings.sh ] ; then
