@@ -105,7 +105,8 @@ function downloadInstructions() {
         git -C /opt/gpjp-hades/Instructions rev-parse
     } &> /dev/null
     if [ $? -ne 0 ] ; then
-        sudo git clone http://github.com/gpjp-hades/Instructions /opt/gpjp-hades/
+        myEcho "Instructions repository was not set up, downloading it.."
+        sudo git clone http://github.com/gpjp-hades/Instructions /opt/gpjp-hades/Instructions
         {
             git -C /opt/gpjp-hades/Instructions rev-parse
         } &> /dev/null
