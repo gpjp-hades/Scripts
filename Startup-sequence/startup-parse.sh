@@ -104,15 +104,19 @@ function parseInstructions() {
             #It is a change-mode command!
             case "$line" in
                 "[install]")
-                    myEcho "Switching mode to install"
+                    #myEcho "Switching mode to install"
                     currentMode="I"
                 ;;
                 "[single]")
-                    myEcho "Switching mode to single"
+                    #myEcho "Switching mode to single"
                     currentMode="S"
                 ;;
+                "[routine-root]")
+                    #myEcho "Switching mode to routine-root"
+                    currentMode="Rr"
+                ;;
                 "[routine]")
-                    myEcho "Switching mode to routine"
+                    #myEcho "Switching mode to routine"
                     currentMode="R"
                 ;;
                 *)

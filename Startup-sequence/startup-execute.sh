@@ -30,12 +30,17 @@ function installMode() {
 
 function singleMode() {
     myEcho "Singleing: $1"
-
+    
 }
 
 function routineMode() {
     myEcho "Routining: $1"
-    sudo $1
+    bash -c "$1"
+}
+
+function routineRootMode() {
+    myEcho "Routining as root: $1"
+    sudo bash -c "$1"
 }
 
 function loadConfig() {
@@ -61,6 +66,9 @@ case "$1" in
     ;;
     "S")
         singleMode "$2"
+    ;;
+    "Rr")
+        routineRootMode "$2"
     ;;
     "R")
         routineMode "$2"
