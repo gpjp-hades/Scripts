@@ -1,6 +1,6 @@
 #!/bin/bash -
 #title           :startup-parse.sh
-#description     :This script will parse config file and carry out it's orders.
+#description     :This script will download parse config file and send commands to startup-execute.sh.
 #author		     :horovtom
 #version         :0.1
 #usage		     :bash startup-parse.sh
@@ -88,16 +88,44 @@ function downloadInstructionsLoaction() {
 
 function parseInstructions() {
     instructions=/opt/gpjp-hades/Instructions/$1
-
+    
+    currentMode="D"
+    
     #IFS='' prevents leading/trailing whitespace from being trimmed
     #-r prevents backslash escapes from being interpreted
     #|| [[ -n $line ]] prevents the last line from being ignored if it doesn't end with a \n
     while IFS='' read -r line || [[ -n "$line" ]]; do
-        myEcho "Line: "$line
+        #Is first char '#'? Then it is a comment, not to be interpreted
+        if [[ $line == "" || $( echo $line | head -c 1 ) == '#' ]] ; then
+            continue
+        fi
+        #myEcho "Line: $line"
+        if [[ $( echo $line | head -c 1 ) == '[' ]] ; then
+            #It is a change-mode command!
+            case "$line" in
+                "[install]")
+                    myEcho "Switching mode to install"
+                    currentMode="I"
+                ;;
+                "[single]")
+                    myEcho "Switching mode to single"
+                    currentMode="S"
+                ;;
+                "[routine]")
+                    myEcho "Switching mode to routine"
+                    currentMode="R"
+                ;;
+                *)
+                    myEcho "I dont know this change-mode command: $line"
+                ;;
+            esac
+        else
+            #It has to be a command:
+            sudo /tmp/gpjp-hades/Scripts/Startup-sequence/startup-execute.sh $currentMode "$line"
+        fi
     done < "$instructions"
-
-    #TODO: COMPLETE!
     
+    myEcho "DONE parsing"
     #I think that one-time carry out instructions should be labeled by ID... This ID will be timeStamp of creation of command. Each computer will hold a list of ID's that it had carried out already. Any new one will be carried out.
     #This allows admin to enter one-time carry out instruction multiple times, even after it had been carried out.
     #We will probably need an application to manage these config files, so user does not have to add timestamp by hand every time.
@@ -129,7 +157,7 @@ function downloadInstructions() {
     git fetch --all
     git reset --hard origin/master
     cd $oldPath
-
+    
     if [ ! -f /opt/gpjp-hades/Instructions/$instructionsLocation ] ; then
         myEcho "ERROR: Instructions repository does not contain instructions file: $instructionsLocation"
         exit -4
