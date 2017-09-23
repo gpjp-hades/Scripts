@@ -93,11 +93,31 @@ function parseInstructions() {
     return
 }
 
+function downloadInstructions() {
+    #Is repository set up?
+    returnVal=git -C /opt/gpjp-config/Instructions rev-parse
+    if [ $returnVal -ne 0 ] ; then
+        sudo git clone http://github.com/gpjp-hades/Instructions /opt/gpjp-config/
+        returnVal=git -C /opt/gpjp-config/Instructions rev-parse
+        if [ $returnVal -ne 0 ] ; then
+            myEcho "ERROR: An error occurred while downloading Instructions repository!"
+            exit -100
+        fi
+    fi
+
+    #Is it up to date?
+    git fetch --all
+    git reset --hard origin/master
+
+    if [ ! -f /opt/gpjp-config/$instructionsLocation ] ; then
+        myEcho "ERROR: Instructions repository does not contain instructions file: $instructionsLocation"
+        exit -4
+    fi
+}
+
 loadConfig
 instructionsLocation=""
 downloadInstructionsLoaction instructionsLocation
 myEcho "Instructions location is: $instructionsLocation"
-#Download instructions:
-
-
-parseInstructions instructions
+downloadInstructions $instructionsLocation
+parseInstructions $instructionsLocation
