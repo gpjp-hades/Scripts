@@ -1,4 +1,4 @@
-#!/bin/bash -
+#!/bin/bash
 #title           :startup-execute.sh
 #description     :This script will execute on boot-sequence and get config from server, then pass it to startup-parse.sh
 #author		     :horovtom
@@ -59,7 +59,11 @@ function singleMode() {
 
 function routineMode() {
     myEcho "Routining: $1 as $defaultUser"
-    sudo su -c "bash -c \"\"$1\"\"" $defaultUser
+    #We have to substitute all '"' for '\"', because of the nested bash calls
+    local g="\""
+    local h="\\\""
+    local result=\"${1//$g/$h}\"
+    sudo su -c "bash -c \"\"$result\"\"" $defaultUser
 }
 
 function routineRootMode() {
