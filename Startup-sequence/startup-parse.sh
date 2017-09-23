@@ -55,6 +55,7 @@ function downloadInstructions() {
     response=$( curl -s $request --silent )
 
     returnVal=$?
+    echo $returnVal
     if [ $returnVal -ne 0 ] ; then
         myEcho "There has been an error communicating with the server! Curl returned: "$retrunVal
         exit -2
