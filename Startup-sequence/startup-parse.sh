@@ -54,26 +54,24 @@ function downloadInstructions() {
     
     response=$( curl -s $request --silent )
 
-    returnVal=$?
-    echo $returnVal
-    if [ $returnVal -ne 0 ] ; then
+    if [ "$response" == "" ] ; then
         myEcho "There has been an error communicating with the server! Curl returned: "$retrunVal
         exit -2
     fi
 
     myEcho "Response was: $response"
     
-    firstField=$( echo $response | python -c 'import sys, json; print json.load(sys.stdin)["result"]' )
+    result=$( echo $response | python -c 'import sys, json; print json.load(sys.stdin)["result"]' )
     
     #Is it the first time it has registered?
-    if [ "$firstField" == "request pending" ] ; then
+    if [ "$result" == "request pending" ] ; then
         myEcho "Nothing to do! Waiting for admin to approve this machine in system"
         exit 1
-        elif [ "$firstField" == "approved" ] ; then
+        elif [ "$result" == "approved" ] ; then
         config=$( echo $response | python -c 'import sys, json; print json.load(sys.stdin)["config"]' )
         eval "$1='$config'"
         return
-        elif [ "$firstField" == "invalid request" ] ; then
+        elif [ "$result" == "invalid request" ] ; then
         myEcho "ERROR: Server did not approve this request! This machine may be doomed!!!! Response was: $response"
         exit -1
     else
