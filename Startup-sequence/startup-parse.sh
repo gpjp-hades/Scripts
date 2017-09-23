@@ -53,6 +53,13 @@ function downloadInstructions() {
     myEcho "Sending request: $request"
     
     response=$( curl -s $request --silent )
+
+    returnVal=$?
+    if [ $returnVal -ne 0 ] ; then
+        myEcho "There has been an error communicating with the server! Curl returned: "$retrunVal
+        exit -2
+    fi
+
     myEcho "Response was: $response"
     
     firstField=$( echo $response | python -c 'import sys, json; print json.load(sys.stdin)["result"]' )
