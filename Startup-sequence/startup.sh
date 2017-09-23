@@ -8,7 +8,7 @@
 
 configFilePath="gpjp-startup-cfg.sh"
 #Location of the repository
-repository="git://github.com/keombre/gpjp-config.git"
+repository="git://github.com/gpjp-hades/Scripts.git"
 #This is being overwriten by config file on GIT
 logFile="/tmp/gpjp-startup.log"
 

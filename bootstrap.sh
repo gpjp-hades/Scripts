@@ -21,7 +21,7 @@ else
     exit 0
 fi
 
-startupRepository="git://github.com/keombre/gpjp-config.git"
+startupRepository="git://github.com/gpjp-hades/Scripts.git"
 configFilePath="gpjp-startup-cfg.sh"
 
 function setupLinks() {
