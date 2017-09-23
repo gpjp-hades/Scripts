@@ -59,7 +59,7 @@ function singleMode() {
 
 function routineMode() {
     myEcho "Routining: $1 as $defaultUser"
-    sudo su -c "bash -c \"$1\"" $defaultUser
+    sudo su -c "bash -c \"\"$1\"\"" $defaultUser
 }
 
 function routineRootMode() {
@@ -74,6 +74,12 @@ function loadConfig() {
     fi
     
     source /tmp/gpjp-hades/Scripts/gpjp-startup-cfg.sh
+
+    if [ ! -x /opt/gpjp-hades/localSettings.sh ] ; then
+        myEcho "Could not find local settings file! Maybe you deleted /opt/gpjp-hades/localSettings.sh"
+    else 
+        source /opt/gpjp-hades/localSettings.sh
+    fi
 }
 
 loadConfig
