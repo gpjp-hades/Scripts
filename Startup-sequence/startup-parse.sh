@@ -105,19 +105,19 @@ function parseInstructions() {
             case "$line" in
                 "[install]")
                     #myEcho "Switching mode to install"
-                    currentMode="I"
+                    local currentMode="I"
                 ;;
                 "[single]")
                     #myEcho "Switching mode to single"
-                    currentMode="S"
+                    local currentMode="S"
                 ;;
                 "[routine-root]")
                     #myEcho "Switching mode to routine-root"
-                    currentMode="Rr"
+                    local currentMode="Rr"
                 ;;
                 "[routine]")
                     #myEcho "Switching mode to routine"
-                    currentMode="R"
+                    local currentMode="R"
                 ;;
                 *)
                     myEcho "I dont know this change-mode command: $line"

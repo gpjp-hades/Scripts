@@ -13,7 +13,7 @@ logFile="/tmp/gpjp-startup.log"
 
 function myEcho() {
     #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-    scriptLocation="startup-execute.sh"
+    local scriptLocation="startup-execute.sh"
     if [ "$logFile" == "" ] ; then
         echo $scriptLocation": "$1 >> /tmp/hades-unconfigured.log
         echo $scriptLocation": "$1
@@ -29,25 +29,25 @@ function installMode() {
 }
 
 function addToExecuted() {
-    if [[ ! -f /opt/gpjp-hades/executed.cfg ]] ; then
-        
+    echo $1 >> /opt/gpjp-hades/executed.list
 }
 
 function alreadyExecuted() {
-
+    grep -Fxq $1 /opt/gpjp-hades/executed.list 
+    return $?
 }
 
 function singleMode() {
     myEcho "Singleing: $1"
     #Get first word (should be ID)
-    commandID=$( awk '{print $1}' <<< $1 )
-    if [[ -n $commandID =~ ^-?[0-9]+$ ]] ; then
+    local commandID=$( awk '{print $1}' <<< $1 )
+    if ! [[ $commandID =~ ^-?[0-9]+$ ]] ; then
         myEcho "Wrong syntax for singleMode. Expected ID, got: $commandID"
         exit -2
     fi
     alreadyExecuted $commandID
     if [[ $? -ne 0 ]] ; then
-        commandToExec=$( echo $1 | cut -d " " -f2- )
+        local commandToExec=$( echo $1 | cut -d " " -f2- )
         myEcho "Executing $commandToExec"
         sudo bash -c $commandToExec
 
