@@ -14,7 +14,8 @@ fi
 
 echo "Welcome to the HADES system installation, do you really want to install HADES and it's components? (Y/N)"
 read result
-if [ "$result" == "Y" ] || [ "$result" == "y" ] ; then
+initial="$( echo $result | head -c 1 )"
+if [ "$initial" == "Y" ] || [ "$initial" == "y" ] ; then
     echo "Alright, let's do it!"
 else
     echo "Stopping!"

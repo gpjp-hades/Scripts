@@ -13,11 +13,11 @@ function myEcho() {
     #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     scriptLocation="startup-updater.sh"
     if [ "$logFile" == "" ] ; then
-        echo $scriptLocation": "$1 >> /tmp/hades-unconfigured.log
-        echo $scriptLocation": "$1
+        echo $scriptLocation": $1" >> /tmp/hades-unconfigured.log
+        echo $scriptLocation": $1"
     else
-        echo $scriptLocation": "$1 >> $logFile
-        echo $scriptLocation": "$1
+        echo $scriptLocation": $1" >> $logFile
+        echo $scriptLocation": $1"
     fi
 }
 

@@ -44,13 +44,16 @@ fi
 if [ "$1" == "-a" ] ; then
     echo "Are you sure you want to uninstall HADES and all of it's components? (Y/N)"
     read result
-    if [ "$result" == "Y" ] || [ "$result" == "y" ] ; then
+
+    initial="$( echo $result | head -c 1 )"
+    if [ "$initial" == "Y" ] || [ "$initial" == "y" ] ; then
         removeAll
     fi
     elif [ $# -eq 0 ] ; then
     echo "Are you sure you want to uninstall HADES, but leave config files? (Y/N)"
     read result
-    if [ "$result" == "Y" ] || [ "$result" == "y" ] ; then
+    initial="$( echo $result | head -c 1 )"
+    if [ "$initial" == "Y" ] || [ "$initial" == "y" ] ; then
         removePart
     fi
 else

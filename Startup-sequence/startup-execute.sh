@@ -16,17 +16,19 @@ function myEcho() {
     #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     local scriptLocation="startup-execute.sh"
     if [ "$logFile" == "" ] ; then
-        echo $scriptLocation": "$1 >> /tmp/hades-unconfigured.log
-        echo $scriptLocation": "$1
+        echo $scriptLocation": $1" >> /tmp/hades-unconfigured.log
+        echo $scriptLocation": $1"
     else
-        echo $scriptLocation": "$1 >> $logFile
-        echo $scriptLocation": "$1
+        echo $scriptLocation": $1" >> $logFile
+        echo $scriptLocation": $1"
     fi
 }
 
 function installMode() {
     myEcho "Installing: $1"
-    sudo apt-get install $1 -y
+
+    local output=$( sudo apt-get install $1 -y )
+    myEcho "$output"
 }
 
 function addToExecuted() {
@@ -50,7 +52,9 @@ function singleMode() {
     if [[ $? -ne 0 ]] ; then
         local commandToExec=$( echo $1 | cut -d " " -f2- )
         myEcho "Executing $commandToExec"
-        sudo bash -c "$commandToExec"
+        local output=$( sudo bash -c "$commandToExec" )
+
+        myEcho "$output"
 
         addToExecuted $commandID
     else
@@ -64,12 +68,16 @@ function routineMode() {
     local g="\""
     local h="\\\""
     local result=\"${1//$g/$h}\"
-    sudo su -c "bash -c \"\"$result\"\"" $defaultUser
+    local output=$( sudo su -c "bash -c \"\"$result\"\"" $defaultUser )
+
+    myEcho "$output"
 }
 
 function routineRootMode() {
     myEcho "Routining as root: $1"
-    sudo bash -c "$1"
+    local output=$( sudo bash -c "$1" )
+
+    myEcho "$output"
 }
 
 function loadConfig() {
