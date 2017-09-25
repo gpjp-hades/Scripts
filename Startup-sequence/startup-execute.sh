@@ -52,7 +52,7 @@ function singleMode() {
     if [[ $? -ne 0 ]] ; then
         local commandToExec=$( echo $1 | cut -d " " -f2- )
         myEcho "Executing $commandToExec"
-        local output=$( sudo bash -c "$commandToExec" )
+        output=$( sudo bash -c "$commandToExec" )
 
         myEcho "$output"
 
@@ -68,14 +68,14 @@ function routineMode() {
     local g="\""
     local h="\\\""
     local result=\"${1//$g/$h}\"
-    local output=$( sudo su -c "bash -c \"\"$result\"\"" $defaultUser )
+    output=$( sudo su -c "bash -c \"\"$result\"\"" $defaultUser )
 
     myEcho "$output"
 }
 
 function routineRootMode() {
     myEcho "Routining as root: $1"
-    local output=$( sudo bash -c "$1" )
+    output=$( sudo bash -c "$1" )
 
     myEcho "$output"
 }
