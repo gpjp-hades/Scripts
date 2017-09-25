@@ -53,7 +53,7 @@ function downloadInstructionsLoaction() {
     #myEcho "My token is: $myToken"
     myEcho "Sending request: $request"
     
-    response=$( curl -s $request --silent )
+    response=$( curl -s -L $request --silent )
     
     if [ "$response" == "" ] ; then
         myEcho "There has been an error communicating with the server! Trying the old standard request: "
