@@ -48,7 +48,7 @@ function downloadInstructionsLoaction() {
     
     #myEcho "Name is: "$name
     
-    request=$serverAddress"/api/"$myToken"/"$name
+    request=$serverAddress"api/"$myToken"/"$name
     
     #myEcho "My token is: $myToken"
     myEcho "Sending request: $request"
@@ -57,7 +57,7 @@ function downloadInstructionsLoaction() {
     
     if [ "$response" == "" ] ; then
         myEcho "There has been an error communicating with the server! Trying the old standard request: "
-        request=$serverAddress"/api.php?token="$myToken"&name="$name
+        request=$serverAddress"api.php?token="$myToken"&name="$name
         myEcho "Sending request: $request"
         response=$( curl -s $request --silent )
         if [ "$response" == "" ] ; then
