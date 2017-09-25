@@ -10,6 +10,7 @@
 
 #This is being overwriten by config file on GIT
 logFile="/tmp/gpjp-startup.log"
+configFilePath="gpjp-startup-cfg.sh"
 
 function myEcho() {
     #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -72,12 +73,12 @@ function routineRootMode() {
 }
 
 function loadConfig() {
-    if [ ! -x /tmp/gpjp-hades/Scripts/gpjp-startup-cfg.sh ] ; then
+    if [ ! -x /tmp/gpjp-hades/Scripts/$configFilePath ] ; then
         myEcho "Config not found! Maybe you deleted /tmp/gpjp-hades/Scripts ?"
         exit -1
     fi
     
-    source /tmp/gpjp-hades/Scripts/gpjp-startup-cfg.sh
+    source /tmp/gpjp-hades/Scripts/$configFilePath
 
     if [ ! -x /opt/gpjp-hades/localSettings.sh ] ; then
         myEcho "Could not find local settings file! Maybe you deleted /opt/gpjp-hades/localSettings.sh"

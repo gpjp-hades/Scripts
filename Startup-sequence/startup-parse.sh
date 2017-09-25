@@ -10,6 +10,7 @@
 name=""
 #This is being overwriten by config file on GIT
 logFile="/tmp/gpjp-startup.log"
+configFilePath="gpjp-startup-cfg.sh"
 
 
 function myEcho() {
@@ -25,12 +26,12 @@ function myEcho() {
 }
 
 function loadConfig() {
-    if [ ! -x /tmp/gpjp-hades/Scripts/gpjp-startup-cfg.sh ] ; then
+    if [ ! -x /tmp/gpjp-hades/Scripts/$configFilePath ] ; then
         myEcho "Config not found! Maybe you deleted /tmp/gpjp-hades/Scripts ?"
         exit -1
     fi
     
-    source /tmp/gpjp-hades/Scripts/gpjp-startup-cfg.sh
+    source /tmp/gpjp-hades/Scripts/$configFilePath
 }
 
 function downloadInstructionsLoaction() {
