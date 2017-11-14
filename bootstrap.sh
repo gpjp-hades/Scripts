@@ -1,4 +1,4 @@
-#!/bin/bash -
+#!/usr/bin/env bash
 #title           :bootstrap.sh
 #description     :This script will install startup script into boot sequence of a system.
 #author		     :horovtom
@@ -137,10 +137,17 @@ function setName() {
     fi
 }
 
+function createCommands() {
+    sudo cp /tmp/gpjp-startup/hadesCommand.sh /usr/bin/hades
+    sudo rm -f /usr/bin/gpjp-hades
+    sudo ln /usr/bin/hades /usr/bin/gpjp-hades
+}
+
 loadConfig
 copyScripts
 setupLinks
 setName
+createCommands
 
 echo "Startup script all set!"
 echo "Cleaning up..."

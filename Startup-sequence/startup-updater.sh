@@ -1,4 +1,4 @@
-#!/bin/bash -
+#!/usr/bin/env bash
 #title           :startup-updater.sh
 #description     :This script will be executed on boot-sequence and update startup from git repository, modyfiyng runlevels if needed
 #author		     :horovtom

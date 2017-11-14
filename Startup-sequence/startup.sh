@@ -1,4 +1,4 @@
-#!/bin/bash -
+#!/usr/bin/env bash
 #title           :startup.sh
 #description     :This script will be executed on boot-sequence and update startup-execute from git repository, then run it
 #author		     :horovtom
@@ -120,10 +120,18 @@ function updateUpdater() {
     updateRunlevels
 }
 
+function updateCommand() {
+    sudo cp /tmp/gpjp-hades/Scripts/hadesCommand.sh /usr/bin/hades
+    sudo chmod +x /usr/bin/hades
+    sudo rm -f /usr/bin/gpjp-hades
+    sudo ln /usr/bin/hades /usr/bin/gpjp-hades
+}
+
 loadConfig
 
 #Do runlevels of startup-updater differ from those in config?
 updateUpdater
+updateCommand
 
 #Run startup parse script:
 myEcho "Running parse script"

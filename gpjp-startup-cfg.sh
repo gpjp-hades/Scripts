@@ -1,4 +1,4 @@
-#!/bin/bash -
+#!/usr/bin/env bash
 #title           :gpjp-startup-cfg.sh
 #description     :This script contains all the settings
 #author		     :horovtom

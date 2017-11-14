@@ -1,4 +1,4 @@
-#!/bin/bash -
+#!/usr/bin/env bash
 #title           :startup-parse.sh
 #description     :This script will download parse config file and send commands to startup-execute.sh.
 #author		     :horovtom

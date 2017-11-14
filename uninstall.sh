@@ -1,4 +1,4 @@
-#!/bin/bash -
+#!/usr/bin/env bash
 #title           :uninstall.sh
 #description     :This script will uninstall HADES system from computer.
 #author		     :horovtom
@@ -19,6 +19,10 @@ function deinstall() {
     
     #Remove scripts:
     sudo rm -f /etc/init.d/gpjp*
+
+    #Remove command:
+    sudo rm -f /usr/bin/hades
+    sudo rm -f /usr/bin/gpjp-hades
     
     echo "DONE!"
     exit 0

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #title           :startup-execute.sh
 #description     :This script will execute on boot-sequence and get config from server, then pass it to startup-parse.sh
 #author		     :horovtom
