@@ -1,12 +1,12 @@
 # Install with Bash
 
 ```bash
-sudo bash -c "bash <(curl -s https://raw.githubusercontent.com/gpjp-hades/Scripts/master/bootstrap.sh)"
+sudo bash -c "bash <(curl -s https://github.com/gpjp-hades/Scripts/releases/download/1.0/bootstrap.sh)"
 ```
 ### Uninstall
 Sorry to see you go.
 ```bash
-sudo bash -c "bash <(curl -s https://raw.githubusercontent.com/gpjp-hades/Scripts/master/uninstall.sh) -a"
+sudo bash -c "bash <(curl -s https://github.com/gpjp-hades/Scripts/releases/download/1.0/uninstall.sh) -a"
 ```
 # About
 This is frontend for the **Hades** project
