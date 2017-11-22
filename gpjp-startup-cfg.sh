@@ -25,4 +25,4 @@ updaterRunPriority=90
 runlevel=5
 runPriority=90
 
-serverAddress="keombre.carek.eu/hades/"
+serverAddress="hades.lynx.orion.edu"
