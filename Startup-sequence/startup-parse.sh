@@ -102,19 +102,29 @@ function parseInstructions() {
             continue
         fi
         #myEcho "Line: $line"
-        if [[ $( echo $line | head -c 1 ) == '[' ]] ; then
+        if [ $( echo $line | head -c 1 ) == '[' ] ; then
             #It is a change-mode command!
-            if [ "$line" == "[install]" ] ; then
-                echo "I"
-            elif [ "$line" == "[single]" ] ; then
-                echo "S"
-            elif [ "$line" == "[routine-root]" ] ; then
-                echo "Rr"
-            elif [ "$line" == "[routine]" ] ; then
-                echo "R"
-            else 
-                echo "I dont know this change-mode command: $line"
-            fi
+            case "$line" in
+                "[install]")
+                    myEcho "Switching mode to install"
+                    local currentMode="I"
+                ;;
+                "[single]")
+                    myEcho "Switching mode to single"
+                    local currentMode="S"
+                ;;
+                "[routine-root]")
+                    myEcho "Switching mode to routine-root"
+                    local currentMode="Rr"
+                ;;
+                "[routine]")
+                    myEcho "Switching mode to routine"
+                    local currentMode="R"
+                ;;
+                *)
+                    myEcho "I dont know this change-mode command: $line"
+                ;;
+            esac
         else
             #It has to be a command:
             sudo /tmp/gpjp-hades/Scripts/Startup-sequence/startup-execute.sh $currentMode "$line"

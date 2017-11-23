@@ -12,7 +12,7 @@
 logFile="/tmp/gpjp-startup.log"
 configFilePath="gpjp-startup-cfg.sh"
 
-echo "I got parameters: $1 $2"
+
 
 function myEcho() {
     #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -97,13 +97,19 @@ function loadConfig() {
     fi
 }
 
+
+
 loadConfig
+
 
 #Check number of args:
 if [[ $# -ne 2 ]] ; then
     myEcho "ERROR: I got wrong number of args: $#"
     exit -1
 fi
+
+
+myEcho "I got parameters: $1 $2"
 
 case "$1" in
     "I")
