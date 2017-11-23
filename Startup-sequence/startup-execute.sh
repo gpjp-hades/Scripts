@@ -13,7 +13,6 @@ logFile="/tmp/gpjp-startup.log"
 configFilePath="gpjp-startup-cfg.sh"
 
 echo "I got parameters: $1 $2"
-exit 0
 
 function myEcho() {
     #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
