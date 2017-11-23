@@ -96,6 +96,7 @@ function parseInstructions() {
     #-r prevents backslash escapes from being interpreted
     #|| [[ -n $line ]] prevents the last line from being ignored if it doesn't end with a \n
     while IFS='' read -r line || [[ -n "$line" ]]; do
+        myEcho "Line to parse was: $line"
         #Is first char '#'? Then it is a comment, not to be interpreted
         if [[ $line == "" || $( echo $line | head -c 1 ) == '#' ]] ; then
             continue
