@@ -90,6 +90,7 @@ function downloadInstructionsLoaction() {
 function parseInstructions() {
     #Workaround for the weird ~/ bug
     oldPath=$( pwd )
+    cd /tmp/
     instructions=/opt/gpjp-hades/Instructions/$1
     
     currentMode="D"
