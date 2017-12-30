@@ -1,0 +1,11 @@
+[Unit]
+Description=Hades update
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/hades
+ExecStart=/bin/go get -u https://github.com/keombre/Scripts
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target network-online.target

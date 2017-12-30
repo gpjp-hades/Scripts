@@ -1,0 +1,12 @@
+[Unit]
+Description=Hades frontend
+Requires=hades-update
+After=hades-update
+
+[Service]
+Type=simple
+ExecStart=/opt/hades/run
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target network-online.target
