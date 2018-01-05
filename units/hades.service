@@ -1,0 +1,12 @@
+[Unit]
+Description=Hades frontend
+
+[Service]
+Environment="REPO=https://github.com/gpjp-hades/Instructions"
+Environment="HADES=http://hades.example.org"
+Type=simple
+ExecStart=/bin/bash /opt/hades/start.sh
+Restart=never
+
+[Install]
+WantedBy=multi-user.target network-online.target
