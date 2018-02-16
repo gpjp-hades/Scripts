@@ -54,14 +54,14 @@ then
         fi
 
         # update service
-        if cmp $updateDir/service/hades.service /lib/systemd/system/hades.service -s ||
-           cmp $updateDir/service/hades.timer /lib/systemd/system/hades.timer -s
+        if cmp $updateDir/service/hades.service /etc/systemd/system/hades.service -s ||
+           cmp $updateDir/service/hades.timer /etc/systemd/system/hades.timer -s
         then
             echo "service up to date"
         else
             echo "updating service"
-            cp -f $updateDir/service/hades.service /lib/systemd/system
-            cp -f $updateDir/service/hades.timer /lib/systemd/system
+            cp -f $updateDir/service/hades.service /etc/systemd/system
+            cp -f $updateDir/service/hades.timer /etc/systemd/system
             systemctl daemon-reload
         fi
 

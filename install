@@ -121,8 +121,8 @@ function copyScripts() {
 }
 
 function systemdRegister() {
-    sudo cp $tmpDir/service/hades.service /lib/systemd/system/
-    sudo cp $tmpDir/service/hades.timer   /lib/systemd/system/
+    sudo cp $tmpDir/service/hades.service /etc/systemd/system/
+    sudo cp $tmpDir/service/hades.timer   /etc/systemd/system/
     
     #Reload systemd to find our new services
     sudo systemctl daemon-reload

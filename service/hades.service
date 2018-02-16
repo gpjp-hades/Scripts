@@ -8,10 +8,10 @@ Type=oneshot
 User=hades
 Group=hades
 
-WorkingDirectory=/opt/gpjp-hades
+WorkingDirectory=/opt/hades
 
-ExecStartPre=-/bin/bash /opt/gpjp-hades/update
-ExecStart=/bin/bash /opt/gpjp-hades/main
+ExecStartPre=-/bin/bash /opt/hades/update
+ExecStart=/bin/bash /opt/hades/main
 
 Restart=no
 
