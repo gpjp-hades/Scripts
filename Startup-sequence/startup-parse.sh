@@ -38,6 +38,13 @@ function loadConfig() {
 }
 
 function downloadInstructionsLoaction() {
+
+    if [[ getent hosts orion.edu | awk '{ print $1 }' == "66.155.35.240" ]]
+    then
+        myEcho "Official Lynx unreachable, aborting."
+        exit 0
+    fi
+
     if [ ! -f $targetDir/local.conf ] ; then
         myEcho "Could not find local config so passing empty name!"
     else

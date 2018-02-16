@@ -84,7 +84,7 @@ function loadConfig() {
 function createEnviroment() {
     if [[ ! -d $targetDir ]]
     then
-        sudo adduser -r hades
+        sudo useradd -r hades
         sudo mkdir $targetDir
         chown -R hades:hades $targetDir
         chmod -R 600 $targetDir
@@ -100,7 +100,7 @@ function createEnviroment() {
             id -u hades >/dev/null 2>&1
             if [[ $? -ne 0 ]]
             then
-                sudo adduser -r hades
+                sudo useradd -r hades
             fi
         fi
     fi
@@ -140,12 +140,12 @@ function systemdRegister() {
 function setName() {
 
     # check if config exists
-    if [[ -f $targetDir/local.conf ]
+    if [[ -f $targetDir/local.conf ]]
     then
         . $targetDir/local.conf
 
         # check if name and defUser is set
-        if [[ ${name+x} ]] && [[ ${defaultUser+x}]]
+        if [[ ${name+x} ]] && [[ ${defaultUser+x} ]]
         then
             echo "Name of this machine is: $name"
             echo "Default user is: $defaultUser"
@@ -170,7 +170,7 @@ function setName() {
     echo "Name is: $name"
     echo "Default user is: $SUDO_USER"
     
-    if [[ ! -f $targetDir/local.conf ]
+    if [[ ! -f $targetDir/local.conf ]]
     then
         sudo echo "name=\"$name\"" > $targetDir/local.conf
         sudo echo "defaultUser=\"$SUDO_USER\"" >> $targetDir/local.conf
