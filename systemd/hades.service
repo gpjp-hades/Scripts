@@ -1,13 +1,13 @@
 [Unit]
 Description=Hades manager
-After=syslog.target network.target
+After=network-online.target
 
 [Service]
-Type=simple
+Type=oneshot
 WorkingDirectory=/opt/gpjp-hades
 PIDFile=/opt/gpjp-hades/master.pid
-ExecStartPre=-/opt/gpjp-hades/update.sh
-ExecStart=/opt/gpjp-hades/main.sh
+ExecStartPre=-/bin/bash /opt/gpjp-hades/update
+ExecStart=/bin/bash /opt/gpjp-hades/main
 
 [Install]
 WantedBy=multi-user.target

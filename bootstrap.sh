@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #title           :bootstrap.sh
 #description     :This script will install startup script into boot sequence of a system.
-#author		     :horovtom
+#author		     :horovtom, keombre
 #version         :0.2
 #usage		     :bash bootstrap.sh
-#notes           :Needs the structure of startup repository: gpjp-startup/Startup-sequence
+#notes           :Needs the structure of startup repository: gpjp-startup/Startup-sequence, gpjp-startup/systemd
 #=============================================================================
 
 function checkSudo() {
@@ -72,14 +72,18 @@ function setupLinks() {
 
 function copyScripts() {
     echo "Copying startup scripts to: /etc/init.d/"
-    sudo cp /tmp/gpjp-startup/Startup-sequence/startup.sh /etc/init.d/gpjp-startup.sh
-    sudo chmod 755 /etc/init.d/gpjp-startup.sh
-    sudo cp /tmp/gpjp-startup/Startup-sequence/startup-updater.sh /etc/init.d/gpjp-startup-updater.sh
-    sudo chmod 755 /etc/init.d/gpjp-startup-updater.sh
+    #sudo cp /tmp/gpjp-startup/Startup-sequence/startup.sh /etc/init.d/gpjp-startup.sh
+    
+    #sudo chmod 755 /etc/init.d/gpjp-startup.sh
+    #sudo cp /tmp/gpjp-startup/Startup-sequence/startup-updater.sh /etc/init.d/gpjp-startup-updater.sh
+    #sudo chmod 755 /etc/init.d/gpjp-startup-updater.sh
+
+    cp /tmp/gpjp-startup/Startup-sequence/startup.sh /opt/gpjp-hades/main
+    cp /tmp/gpjp-startup/Startup-sequence/startup-updater.sh /opt/gpjp-hades/update
     
     #Error check:
-    if [ ! -x /etc/init.d/gpjp-startup.sh ] || [ ! -x /etc/init.d/gpjp-startup-updater.sh ] ; then
-        echo "There was an error while copying startup scripts to /etc/init.d"
+    if [ ! -x /opt/gpjp-hades/main ] || [ ! -x /opt/gpjp-hades/update ] ; then
+        echo "There was an error while copying startup scripts to /opt/gpjp-hades"
         exit -2
     fi
 }
@@ -128,14 +132,21 @@ function setName() {
         echo "Default user is: $defaultUser"
         return
     fi
-    
+
+
     if [ $# -lt 1 ] ; then
-        echo "Enter name for this PC:"
-        read name
+        printf "Enter name for this PC [%s]: " $(hostname)
+        read -r
+        if [[ $REPLY == "" ]]
+        then
+            name=$(hostname)
+        else
+            name=$REPLY
+        fi
     else
         name=$1
     fi
-    
+
     echo "Name is: "$name
     echo "Default user is: $SUDO_USER"
     if [ ! -d /opt/gpjp-hades ] ; then
@@ -159,15 +170,21 @@ function createCommands() {
 }
 
 function systemdRegister() {
-    cp /tmp/gpjp-startup/systemd/hades.service /lib/systemd/system/hades.service
+    cp /tmp/gpjp-startup/systemd/hades.service /lib/systemd/system/
+    cp /tmp/gpjp-startup/systemd/hades.timer /lib/systemd/system/
     
     printf "Do you want Hades to start automatically? [Y/n]: "
     read -n 1 -r
     if [[ $REPLY =~ (^[Yy]$|^$) ]]
     then
         echo "Registering Hades with systemd..."
-        sudo systemctl enable hades.service
+        sudo systemctl enable hades.timer
     fi
+}
+
+function startService() {
+    echo "Starting Hades..."
+    sudo systemctl start hades.timer
 }
 
 checkSudo
@@ -176,12 +193,13 @@ then
     exit 0
 fi
 
-#loadConfig
-#copyScripts
-#setupLinks
-#setName
-#createCommands
+loadConfig
+copyScripts
 systemdRegister
+#setupLinks
+setName
+createCommands
+
 
 echo "Startup script all set!"
 echo "Cleaning up..."
