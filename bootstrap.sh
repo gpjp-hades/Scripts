@@ -7,20 +7,35 @@
 #notes           :Needs the structure of startup repository: gpjp-startup/Startup-sequence
 #=============================================================================
 
-if [ "$EUID" -ne 0 ] ; then
-    echo "ERROR: Please run this script as root!!"
-    exit -10
-fi
+function checkSudo() {
+    if [ "$EUID" -ne 0 ] ; then
+        echo "ERROR: Please run this script as root!!"
+        exit -10
+    fi
+}
 
-echo "Welcome to the HADES system installation, do you really want to install HADES and it's components? (Y/N)"
-read result
-initial="$( echo $result | head -c 1 )"
-if [ "$initial" == "Y" ] || [ "$initial" == "y" ] ; then
-    echo "Alright, let's do it!"
-else
-    echo "Stopping!"
-    exit 0
-fi
+function welcome() {
+    echo "  _    _           _           "
+    echo " | |  | |         | |          "
+    echo " | |__| | __ _  __| | ___  ___ "
+    echo " |  __  |/ _\` |/ _\` |/ _ \\/ __|"
+    echo " | |  | | (_| | (_| |  __/\\__ \\"
+    echo " |_|  |_|\\__,_|\\__,_|\\___||___/"
+    echo
+    echo "Welcome to the HADES system installation!"
+    echo
+    printf "Do you want to proceede with the instalation? [Y/n]: "
+    read -n 1 -r
+    echo 
+    if [[ $REPLY =~ (^[Yy]$|^$) ]]
+    then
+        echo "Alright, let's do it!"
+        return 1
+    else
+        echo "Stopping!"
+        return 0
+    fi
+}
 
 startupRepository="git://github.com/gpjp-hades/Scripts.git"
 configFilePath="gpjp-startup-cfg.sh"
@@ -143,11 +158,30 @@ function createCommands() {
     sudo ln /usr/bin/hades /usr/bin/gpjp-hades
 }
 
-loadConfig
-copyScripts
-setupLinks
-setName
-createCommands
+function systemdRegister() {
+    cp /tmp/gpjp-startup/systemd/hades.service /lib/systemd/system/hades.service
+    
+    printf "Do you want Hades to start automatically? [Y/n]: "
+    read -n 1 -r
+    if [[ $REPLY =~ (^[Yy]$|^$) ]]
+    then
+        echo "Registering Hades with systemd..."
+        sudo systemctl enable hades.service
+    fi
+}
+
+checkSudo
+if welcome
+then
+    exit 0
+fi
+
+#loadConfig
+#copyScripts
+#setupLinks
+#setName
+#createCommands
+systemdRegister
 
 echo "Startup script all set!"
 echo "Cleaning up..."
