@@ -5,9 +5,11 @@ After=network-online.target
 [Service]
 Type=oneshot
 WorkingDirectory=/opt/gpjp-hades
-PIDFile=/opt/gpjp-hades/master.pid
+
 ExecStartPre=-/bin/bash /opt/gpjp-hades/update
 ExecStart=/bin/bash /opt/gpjp-hades/main
+
+Restart=no
 
 [Install]
 WantedBy=multi-user.target

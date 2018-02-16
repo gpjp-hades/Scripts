@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+#title           :main
+#description     :This script will be executed on boot-sequence and update startup-execute from git repository, then run it
+#author		     :horovtom, keombre
+#version         :0.2
+#notes           :This script will take existing gpjp-config clone from gpjp-startup-updater.sh
+#==============================================================================
+
+updateDir="Update"
+
+#check connectivity
+if nc -z github.com 80 >/dev/null 2>&1
+then
+    # get config
+    if [[ -f "hades.conf" ]]
+    then
+        . hades.conf
+    else
+        echo "config not found; quitting"
+        exit -4
+    fi
+
+    #update updater
+    if cmp $updateDir/run/update ./update -s
+    then
+        echo "updater up to date"
+    else
+        echo "updating updater"
+        cp -f $updateDir/run/update .
+        echo "updater updated, quitting"
+        exit 0
+    fi
+
+    #Run startup parse script:
+    echo "Running parse script"
+    $updateDir/startup-parse.sh
+
+    echo "Parse script returned: "$?
+    #FIXME: Wait for all async calls (Shouldn't be needed!)
+    sleep 10
+
+else
+    echo "Github unreachable. Network down?"
+fi
+
+# Clean up
+rm -rf $updateDir

@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+#title           :update
+#description     :Check git for changes, if present apply them localy
+#author		     :keombre
+#version         :0.1
+#notes           :
+#==============================================================================
+
+repository="git://github.com/gpjp-hades/Scripts.git"
+updateDir="Update"
+branch="master"
+
+if nc -z github.com 80 >/dev/null 2>&1
+then
+    # ensure git
+    if $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed")
+    then
+        echo "Git not found, fixing: ";
+        apt-get install git -y;
+    fi
+
+    # get latest commit
+    commit=$(git ls-remote $repository $branch | awk '{print $1;}')
+
+    # update if necessary
+    if [[ ! -f "branch.ver" || "$commit" != $(< branch.ver) ]]
+    then
+
+        # wipe update dir
+        if [[ -d $updateDir ]]
+        then
+            rm -rf $updateDir
+        fi
+        mkdir -p $updateDir
+
+        git clone $repository $updateDir
+
+        # update main
+        if cmp $updateDir/run/main ./main -s
+        then
+            echo "main up to date"
+        else
+            echo "updating main"
+            cp -f $updateDir/run/main .
+        fi
+
+        # update config
+        if cmp $updateDir/hades.conf ./hades.conf -s
+        then
+            echo "config up to date"
+        else
+            echo "updating config"
+            cp -f $updateDir/hades.conf .
+        fi
+
+        # update service
+        if cmp $updateDir/service/hades.service /lib/systemd/system/hades.service -s ||
+           cmp $updateDir/service/hades.timer /lib/systemd/system/hades.timer -s
+        then
+            echo "service up to date"
+        else
+            echo "updating service"
+            cp -f $updateDir/service/hades.service /lib/systemd/system
+            cp -f $updateDir/service/hades.timer /lib/systemd/system
+            systemctl daemon-reload
+        fi
+
+        # update command (probably not needed, since we have service)
+        if cmp $updateDir/run/hades /usr/bin/hades -s
+        then
+            echo "command up to date"
+        else
+            echo "updating command"
+            cp $updateDir/run/hades /usr/bin/hades
+            chmod +x /usr/bin/hades
+            rm -f /usr/bin/gpjp-hades
+            ln /usr/bin/hades /usr/bin/gpjp-hades
+        fi
+
+        # update local repo info
+        echo $commit > branch.ver
+        echo "commit updated, update finished"
+    else
+        echo "up to date"
+    fi
+else
+    echo "Github unreachable. Network down?"
+fi

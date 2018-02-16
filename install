@@ -1,0 +1,198 @@
+#!/usr/bin/env bash
+#title           :install
+#description     :This script will install startup script into boot sequence of a system.
+#author		     :horovtom, keombre
+#version         :0.2
+#usage		     :bash ./install
+#notes           :Needs the structure of startup repository: gpjp-startup/run, gpjp-startup/systemd
+#=============================================================================
+
+branch="master"
+targetDir="/opt/hades"
+tmpDir="$targetDir/Update"
+repository="git://github.com/gpjp-hades/Scripts.git"
+config="gpjp-startup-cfg.sh"
+
+function checkSudo() {
+    if [ "$EUID" -ne 0 ] ; then
+        echo "ERROR: Please run this script as root!!"
+        exit -10
+    fi
+}
+
+function welcome() {
+    echo "  _    _           _           "
+    echo " | |  | |         | |          "
+    echo " | |__| | __ _  __| | ___  ___ "
+    echo " |  __  |/ _\` |/ _\` |/ _ \\/ __|"
+    echo " | |  | | (_| | (_| |  __/\\__ \\"
+    echo " |_|  |_|\\__,_|\\__,_|\\___||___/"
+    echo
+    echo "Welcome to the HADES system installation!"
+    echo
+    printf "Do you want to proceede with the instalation? [Y/n]: "
+    read -n 1 -r
+    echo 
+    if [[ $REPLY =~ (^[Yy]$|^$) ]]
+    then
+        echo "Alright, let's do it!"
+        return 1
+    else
+        echo "Stopping!"
+        return 0
+    fi
+}
+
+function download() {
+    
+    # ensure git
+    if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ];
+    then
+        echo "Git not found, fixing: ";
+        apt-get install git -y;
+    else
+        echo "Git found!";
+    fi
+    
+    # wipe temp dir
+    if [[ -d $tmpDir ]]
+    then
+        rm -rf $tmpDir
+    fi
+
+    git clone -b $branch $repository $tmpDir
+    
+    # error check
+    if [[ $? -ne 0 ]]
+    then
+        echo "There was an error while cloning repository!"
+        exit -1
+    fi
+}
+
+function loadConfig() {
+
+    # get config
+    if [[ -f "$tmpDir/hades.conf" ]]
+    then
+        . $tmpDir/hades.conf
+    else
+        echo "config not found; quitting"
+        exit -4
+    fi
+}
+
+function copyScripts() {
+    echo "Copying startup scripts to: $targetDir"
+
+    if [ ! -d $targetDir ]
+    then
+        sudo mkdir $targetDir
+    fi
+
+    cp $tmpDir/run/main $targetDir/main
+    cp $tmpDir/run/update $targetDir/update
+    
+    # error check
+    if [ ! -f $tmpDir/run/main ] || [ ! -f $tmpDir/run/update ]
+    then
+        echo "There was an error while copying startup scripts to $targetDir"
+        exit -2
+    fi
+}
+
+function systemdRegister() {
+    sudo cp $tmpDir/service/hades.service /lib/systemd/system/
+    sudo cp $tmpDir/service/hades.timer   /lib/systemd/system/
+    
+    #Reload systemd to find our new services
+    sudo systemctl daemon-reload
+
+    printf "Do you want Hades to start automatically? [Y/n]: "
+    read -n 1 -r
+    echo
+    if [[ $REPLY =~ (^[Yy]$|^$) ]]
+    then
+        echo "Enabling service..."
+        sudo systemctl enable hades.timer
+    fi
+}
+
+function setName() {
+
+    # check if config exists
+    if [[ -f $targetDir/local.conf ]
+    then
+        . $targetDir/local.conf
+
+        # check if name and defUser is set
+        if [[ ${name+x} ]] && [[ ${defaultUser+x}]]
+        then
+            echo "Name of this machine is: $name"
+            echo "Default user is: $defaultUser"
+            return
+        fi
+    fi
+
+    # check if arg contains PC name
+    if [ $# -lt 1 ] ; then
+        printf "Enter name for this machine [%s]: " $(hostname)
+        read -r
+        if [[ $REPLY == "" ]]
+        then
+            name=$(hostname)
+        else
+            name=$REPLY
+        fi
+    else
+        name=$1
+    fi
+
+    echo "Name is: $name"
+    echo "Default user is: $SUDO_USER"
+    
+    if [[ ! -f $targetDir/local.conf ]
+    then
+        sudo echo "name=\"$name\"" > $targetDir/local.conf
+        sudo echo "defaultUser=\"$SUDO_USER\"" >> $targetDir/local.conf
+    fi
+}
+
+function createCommands() {
+    sudo cp $tmpDir/run/hades /usr/bin/hades
+    sudo rm -f /usr/bin/gpjp-hades
+    sudo ln /usr/bin/hades /usr/bin/gpjp-hades
+}
+
+function cleanUp() {
+    echo
+    echo "Startup script all set!"
+    echo "Cleaning up..."
+    sudo rm -rf $tmpDir
+}
+
+function startService() {
+    echo "Starting Hades..."
+    sudo systemctl start hades.timer
+}
+
+
+checkSudo
+if welcome
+then
+    exit 0
+fi
+
+if nc -z github.com 80 >/dev/null 2>&1
+then
+    download
+    loadConfig
+    copyScripts
+    systemdRegister
+    setName
+    createCommands
+    cleanUp
+    startService
+else
+    echo "Github unreachable. Network down?"
+fi
