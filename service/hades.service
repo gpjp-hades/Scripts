@@ -4,6 +4,10 @@ After=network-online.target
 
 [Service]
 Type=oneshot
+
+User=hades
+Group=hades
+
 WorkingDirectory=/opt/gpjp-hades
 
 ExecStartPre=-/bin/bash /opt/gpjp-hades/update

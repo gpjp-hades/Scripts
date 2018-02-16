@@ -20,7 +20,7 @@ then
         exit -4
     fi
 
-    #update updater
+    # update updater
     if cmp $updateDir/run/update ./update -s
     then
         echo "updater up to date"

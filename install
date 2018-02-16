@@ -7,11 +7,10 @@
 #notes           :Needs the structure of startup repository: gpjp-startup/run, gpjp-startup/systemd
 #=============================================================================
 
-branch="master"
+branch="systemd"
 targetDir="/opt/hades"
 tmpDir="$targetDir/Update"
 repository="git://github.com/gpjp-hades/Scripts.git"
-config="gpjp-startup-cfg.sh"
 
 function checkSudo() {
     if [ "$EUID" -ne 0 ] ; then
@@ -82,13 +81,33 @@ function loadConfig() {
     fi
 }
 
+function createEnviroment() {
+    if [[ ! -d $targetDir ]]
+    then
+        sudo adduser -r hades
+        sudo mkdir $targetDir
+        chown -R hades:hades $targetDir
+        chmod -R 600 $targetDir
+    else
+        printf "Target directory not empty. Proceed? [y/N]: "
+        read -n 1 -r
+        echo
+        if [[ $REPLY =~ (^[Nn]$|^$) ]]
+        then
+            exit -5
+        else
+            # create user if doesn't exist
+            id -u hades >/dev/null 2>&1
+            if [[ $? -ne 0 ]]
+            then
+                sudo adduser -r hades
+            fi
+        fi
+    fi
+}
+
 function copyScripts() {
     echo "Copying startup scripts to: $targetDir"
-
-    if [ ! -d $targetDir ]
-    then
-        sudo mkdir $targetDir
-    fi
 
     cp $tmpDir/run/main $targetDir/main
     cp $tmpDir/run/update $targetDir/update
@@ -185,6 +204,7 @@ fi
 
 if nc -z github.com 80 >/dev/null 2>&1
 then
+    createEnviroment
     download
     loadConfig
     copyScripts

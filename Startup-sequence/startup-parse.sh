@@ -7,6 +7,9 @@
 #notes           :
 #==============================================================================
 
+targetDir="/opt/hades"
+updateDir="$targetDir/Update"
+
 name=""
 #This is being overwriten by config file on GIT
 logFile="/tmp/gpjp-startup.log"
@@ -26,19 +29,19 @@ function myEcho() {
 }
 
 function loadConfig() {
-    if [ ! -x /tmp/gpjp-hades/Scripts/$configFilePath ] ; then
-        myEcho "Config not found! Maybe you deleted /tmp/gpjp-hades/Scripts ?"
+    if [ ! -x $updateDir/$configFilePath ] ; then
+        myEcho "Config not found! Maybe you deleted $updateDir ?"
         exit -1
     fi
     
-    source /tmp/gpjp-hades/Scripts/$configFilePath
+    source $updateDir/$configFilePath
 }
 
 function downloadInstructionsLoaction() {
-    if [ ! -x /opt/gpjp-hades/localSettings.sh ] ; then
+    if [ ! -f $targetDir/local.conf ] ; then
         myEcho "Could not find local config so passing empty name!"
     else
-        source /opt/gpjp-hades/localSettings.sh
+        source $targetDir/local.conf
     fi
     
     name="${name//' '/%20}"
@@ -66,7 +69,7 @@ function downloadInstructionsLoaction() {
         fi
     fi
     
-    myEcho "Response was: $response"
+    myEcho "Response was: ${response:0:50}"
     
     result=$( echo $response | python -c 'import sys, json; print json.load(sys.stdin)["result"]' )
     
@@ -91,7 +94,7 @@ function parseInstructions() {
     #Workaround for the weird ~/ bug
     oldPath=$( pwd )
     cd /tmp/
-    instructions=/opt/gpjp-hades/Instructions/$1
+    instructions=$targetDir/Instructions/$1
     
     currentMode="D"
     
@@ -130,7 +133,7 @@ function parseInstructions() {
             esac
         else
             #It has to be a command:
-            sudo /tmp/gpjp-hades/Scripts/Startup-sequence/startup-execute.sh $currentMode "$line"
+            sudo $updateDir/Startup-sequence/startup-execute.sh $currentMode "$line"
         fi
     done < "$instructions"
     
@@ -147,13 +150,13 @@ function parseInstructions() {
 function downloadInstructions() {
     #Is repository set up?
     {
-        git -C /opt/gpjp-hades/Instructions rev-parse
+        git -C $targetDir/Instructions rev-parse
     } &> /dev/null
     if [ $? -ne 0 ] ; then
         myEcho "Instructions repository was not set up, downloading it.."
-        sudo git clone http://github.com/gpjp-hades/Instructions /opt/gpjp-hades/Instructions
+        sudo git clone http://github.com/gpjp-hades/Instructions $targetDir/Instructions
         {
-            git -C /opt/gpjp-hades/Instructions rev-parse
+            git -C $targetDir/Instructions rev-parse
         } &> /dev/null
         if [ $? -ne 0 ] ; then
             myEcho "ERROR: An error occurred while downloading Instructions repository!"
@@ -163,12 +166,12 @@ function downloadInstructions() {
     
     #Is it up to date?
     oldPath=$( pwd )
-    cd /opt/gpjp-hades/Instructions
+    cd $targetDir/Instructions
     git fetch --all
     git reset --hard origin/master
     cd $oldPath
     
-    if [ ! -f /opt/gpjp-hades/Instructions/$instructionsLocation ] ; then
+    if [ ! -f $targetDir/Instructions/$instructionsLocation ] ; then
         myEcho "ERROR: Instructions repository does not contain instructions file: $instructionsLocation"
         exit -4
     fi

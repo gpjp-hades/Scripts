@@ -11,6 +11,8 @@
 #This is being overwriten by config file on GIT
 logFile="/tmp/gpjp-startup.log"
 configFilePath="gpjp-startup-cfg.sh"
+targetDir="/opt/hades"
+updateDir="$targetDir/Update"
 
 
 
@@ -34,11 +36,11 @@ function installMode() {
 }
 
 function addToExecuted() {
-    echo $1 >> /opt/gpjp-hades/executed.list
+    echo $1 >> $targetDir/executed.list
 }
 
 function alreadyExecuted() {
-    grep -Fxq $1 /opt/gpjp-hades/executed.list 
+    grep -Fxq $1 $targetDir/executed.list 
     return $?
 }
 
@@ -83,17 +85,17 @@ function routineRootMode() {
 }
 
 function loadConfig() {
-    if [ ! -x /tmp/gpjp-hades/Scripts/$configFilePath ] ; then
-        myEcho "Config not found! Maybe you deleted /tmp/gpjp-hades/Scripts ?"
+    if [ ! -f $updateDir/$configFilePath ] ; then
+        myEcho "Config not found! Maybe you deleted $updateDir ?"
         exit -1
     fi
     
-    source /tmp/gpjp-hades/Scripts/$configFilePath
+    source $updateDir/$configFilePath
 
-    if [ ! -x /opt/gpjp-hades/localSettings.sh ] ; then
-        myEcho "Could not find local settings file! Maybe you deleted /opt/gpjp-hades/localSettings.sh"
+    if [ ! -f $targetDir/local.conf ] ; then
+        myEcho "Could not find local settings file! Maybe you deleted $targetDir/local.conf"
     else 
-        source /opt/gpjp-hades/localSettings.sh
+        source $targetDir/local.conf
     fi
 }
 
