@@ -71,12 +71,14 @@ function setupLinks() {
 }
 
 function copyScripts() {
-    echo "Copying startup scripts to: /etc/init.d/"
+    echo "Copying startup scripts to: /opt/gpjp-hades/"
     #sudo cp /tmp/gpjp-startup/Startup-sequence/startup.sh /etc/init.d/gpjp-startup.sh
     
     #sudo chmod 755 /etc/init.d/gpjp-startup.sh
     #sudo cp /tmp/gpjp-startup/Startup-sequence/startup-updater.sh /etc/init.d/gpjp-startup-updater.sh
     #sudo chmod 755 /etc/init.d/gpjp-startup-updater.sh
+
+    sudo mkdir /opt/gpjp-hades/
 
     cp /tmp/gpjp-startup/Startup-sequence/startup.sh /opt/gpjp-hades/main
     cp /tmp/gpjp-startup/Startup-sequence/startup-updater.sh /opt/gpjp-hades/update
@@ -170,11 +172,12 @@ function createCommands() {
 }
 
 function systemdRegister() {
-    cp /tmp/gpjp-startup/systemd/hades.service /lib/systemd/system/
-    cp /tmp/gpjp-startup/systemd/hades.timer /lib/systemd/system/
+    sudo cp /tmp/gpjp-startup/systemd/hades.service /lib/systemd/system/
+    sudo cp /tmp/gpjp-startup/systemd/hades.timer /lib/systemd/system/
     
     printf "Do you want Hades to start automatically? [Y/n]: "
     read -n 1 -r
+    echo
     if [[ $REPLY =~ (^[Yy]$|^$) ]]
     then
         echo "Registering Hades with systemd..."
@@ -184,8 +187,17 @@ function systemdRegister() {
 
 function startService() {
     echo "Starting Hades..."
+    sudo systemctl daemon-reload
     sudo systemctl start hades.timer
 }
+
+function cleanUp() {
+    echo
+    echo "Startup script all set!"
+    echo "Cleaning up..."
+    sudo rm -rf /tmp/gpjp-startup
+}
+
 
 checkSudo
 if welcome
@@ -196,12 +208,7 @@ fi
 loadConfig
 copyScripts
 systemdRegister
-#setupLinks
 setName
 createCommands
-
-
-echo "Startup script all set!"
-echo "Cleaning up..."
-sudo rm -rf /tmp/gpjp-startup
-echo "DONE!"
+cleanUp
+startService
