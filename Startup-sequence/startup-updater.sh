@@ -11,6 +11,8 @@ logFile="/tmp/gpjp-startup.log"
 
 function myEcho() {
     #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+    #Not compattible with systemd :(
     scriptLocation="startup-updater.sh"
     if [ "$logFile" == "" ] ; then
         echo $scriptLocation": $1" >> /tmp/hades-unconfigured.log
