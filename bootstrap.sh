@@ -1,41 +1,26 @@
 #!/usr/bin/env bash
 #title           :bootstrap.sh
 #description     :This script will install startup script into boot sequence of a system.
-#author		     :horovtom, keombre
+#author		     :horovtom
 #version         :0.2
 #usage		     :bash bootstrap.sh
-#notes           :Needs the structure of startup repository: gpjp-startup/Startup-sequence, gpjp-startup/systemd
+#notes           :Needs the structure of startup repository: gpjp-startup/Startup-sequence
 #=============================================================================
 
-function checkSudo() {
-    if [ "$EUID" -ne 0 ] ; then
-        echo "ERROR: Please run this script as root!!"
-        exit -10
-    fi
-}
+if [ "$EUID" -ne 0 ] ; then
+    echo "ERROR: Please run this script as root!!"
+    exit -10
+fi
 
-function welcome() {
-    echo "  _    _           _           "
-    echo " | |  | |         | |          "
-    echo " | |__| | __ _  __| | ___  ___ "
-    echo " |  __  |/ _\` |/ _\` |/ _ \\/ __|"
-    echo " | |  | | (_| | (_| |  __/\\__ \\"
-    echo " |_|  |_|\\__,_|\\__,_|\\___||___/"
-    echo
-    echo "Welcome to the HADES system installation!"
-    echo
-    printf "Do you want to proceede with the instalation? [Y/n]: "
-    read -n 1 -r
-    echo 
-    if [[ $REPLY =~ (^[Yy]$|^$) ]]
-    then
-        echo "Alright, let's do it!"
-        return 1
-    else
-        echo "Stopping!"
-        return 0
-    fi
-}
+echo "Welcome to the HADES system installation, do you really want to install HADES and it's components? (Y/N)"
+read result
+initial="$( echo $result | head -c 1 )"
+if [ "$initial" == "Y" ] || [ "$initial" == "y" ] ; then
+    echo "Alright, let's do it!"
+else
+    echo "Stopping!"
+    exit 0
+fi
 
 startupRepository="git://github.com/gpjp-hades/Scripts.git"
 configFilePath="gpjp-startup-cfg.sh"
@@ -71,21 +56,15 @@ function setupLinks() {
 }
 
 function copyScripts() {
-    echo "Copying startup scripts to: /opt/gpjp-hades/"
-    #sudo cp /tmp/gpjp-startup/Startup-sequence/startup.sh /etc/init.d/gpjp-startup.sh
-    
-    #sudo chmod 755 /etc/init.d/gpjp-startup.sh
-    #sudo cp /tmp/gpjp-startup/Startup-sequence/startup-updater.sh /etc/init.d/gpjp-startup-updater.sh
-    #sudo chmod 755 /etc/init.d/gpjp-startup-updater.sh
-
-    sudo mkdir /opt/gpjp-hades/
-
-    cp /tmp/gpjp-startup/Startup-sequence/startup.sh /opt/gpjp-hades/main
-    cp /tmp/gpjp-startup/Startup-sequence/startup-updater.sh /opt/gpjp-hades/update
+    echo "Copying startup scripts to: /etc/init.d/"
+    sudo cp /tmp/gpjp-startup/Startup-sequence/startup.sh /etc/init.d/gpjp-startup.sh
+    sudo chmod 755 /etc/init.d/gpjp-startup.sh
+    sudo cp /tmp/gpjp-startup/Startup-sequence/startup-updater.sh /etc/init.d/gpjp-startup-updater.sh
+    sudo chmod 755 /etc/init.d/gpjp-startup-updater.sh
     
     #Error check:
-    if [ ! -x /opt/gpjp-hades/main ] || [ ! -x /opt/gpjp-hades/update ] ; then
-        echo "There was an error while copying startup scripts to /opt/gpjp-hades"
+    if [ ! -x /etc/init.d/gpjp-startup.sh ] || [ ! -x /etc/init.d/gpjp-startup-updater.sh ] ; then
+        echo "There was an error while copying startup scripts to /etc/init.d"
         exit -2
     fi
 }
@@ -134,21 +113,14 @@ function setName() {
         echo "Default user is: $defaultUser"
         return
     fi
-
-
+    
     if [ $# -lt 1 ] ; then
-        printf "Enter name for this PC [%s]: " $(hostname)
-        read -r
-        if [[ $REPLY == "" ]]
-        then
-            name=$(hostname)
-        else
-            name=$REPLY
-        fi
+        echo "Enter name for this PC:"
+        read name
     else
         name=$1
     fi
-
+    
     echo "Name is: "$name
     echo "Default user is: $SUDO_USER"
     if [ ! -d /opt/gpjp-hades ] ; then
@@ -171,44 +143,13 @@ function createCommands() {
     sudo ln /usr/bin/hades /usr/bin/gpjp-hades
 }
 
-function systemdRegister() {
-    sudo cp /tmp/gpjp-startup/systemd/hades.service /lib/systemd/system/
-    sudo cp /tmp/gpjp-startup/systemd/hades.timer /lib/systemd/system/
-    
-    printf "Do you want Hades to start automatically? [Y/n]: "
-    read -n 1 -r
-    echo
-    if [[ $REPLY =~ (^[Yy]$|^$) ]]
-    then
-        echo "Registering Hades with systemd..."
-        sudo systemctl enable hades.timer
-    fi
-}
-
-function startService() {
-    echo "Starting Hades..."
-    sudo systemctl daemon-reload
-    sudo systemctl start hades.timer
-}
-
-function cleanUp() {
-    echo
-    echo "Startup script all set!"
-    echo "Cleaning up..."
-    sudo rm -rf /tmp/gpjp-startup
-}
-
-
-checkSudo
-if welcome
-then
-    exit 0
-fi
-
 loadConfig
 copyScripts
-systemdRegister
+setupLinks
 setName
 createCommands
-cleanUp
-startService
+
+echo "Startup script all set!"
+echo "Cleaning up..."
+sudo rm -rf /tmp/gpjp-startup
+echo "DONE!"
