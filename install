@@ -9,7 +9,7 @@
 
 branch="systemd"
 targetDir="/opt/hades"
-tmpDir="$targetDir/Update"
+tmpDir="$targetDir/Remote"
 repository="git://github.com/gpjp-hades/Scripts.git"
 
 function checkSudo() {

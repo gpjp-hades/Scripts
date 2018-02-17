@@ -7,7 +7,7 @@
 #==============================================================================
 
 targetDir="/opt/hades"
-updateDir=$targetDir/Update
+updateDir=$targetDir/Remote
 repoDir=$targetDir/Instructions
 
 name=""
@@ -44,7 +44,9 @@ function getInstructionName() {
     # primitive url encode
     name="${name//' '/%20}"
     
-    token=$(uuidgen)
+    # harddrive uuid
+    token=$(blkid | grep -oP 'UUID="\K[^"]+' | sha256sum | awk '{print $1}')
+
     request=$serverAddress/api/$token/$name
     
     echo "Sending request: $request"

@@ -6,7 +6,7 @@
 #notes           :This script will take existing gpjp-config clone from gpjp-startup-updater.sh
 #==============================================================================
 
-updateDir="Update"
+updateDir="Remote"
 
 #check connectivity
 if nc -z github.com 80 >/dev/null 2>&1
@@ -48,6 +48,3 @@ then
 else
     echo "Github unreachable. Network down?"
 fi
-
-# Clean up
-rm -rf $updateDir
