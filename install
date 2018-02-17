@@ -46,8 +46,9 @@ function download() {
     
     # ensure git and curl
     if ! dpkg -s git curl jq >/dev/null 2>&1
-        echo "Git, curl or jq not found, fixing: ";
-        sudo apt-get install git curl -y;
+    then
+        echo "Git, curl or jq not found, fixing: "
+        sudo apt-get install git curl -y
     fi
     
     # wipe temp dir

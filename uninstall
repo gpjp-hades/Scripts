@@ -7,13 +7,15 @@
 #notes           :-a switch will delete all local user settings
 #=============================================================================
 
+targetDir="/opt/hades"
+
 if [ "$EUID" -ne 0 ] ; then
     echo "ERROR: Please run this script as root!!"
     exit -10
 fi
 
 function deinstall() {
-    
+
     #Remove scripts:
     sudo systemctl disable hades
     sudo systemctl stop hades
@@ -25,19 +27,22 @@ function deinstall() {
     sudo rm -f /usr/bin/hades
     sudo rm -f /usr/bin/gpjp-hades
     
+    #Remove user
+    deluser --quiet hades
+
     echo "DONE!"
     exit 0
 }
 
 function removeAll() {
     echo "All right, let's do it!"
-    sudo rm -rf /opt/hades
+    sudo rm -rf $targetDir
     deinstall
 }
 
 function removePart() {
     echo "All right, let's do it!"
-    sudo find /opt/hades/ -not -name 'localSettings.sh' -type f -exec rm {} +
+    sudo find $targetDir/ -not -name 'localSettings.sh' -type f -exec rm {} +
     deinstall
 }
 
