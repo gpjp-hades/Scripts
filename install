@@ -57,7 +57,8 @@ function download() {
         rm -rf $tmpDir
     fi
 
-    git clone -b $branch $repository $tmpDir
+    echo "Cloning into '$tmpDir'..."
+    git clone -q -b $branch $repository $tmpDir
     
     # error check
     if [[ $? -ne 0 ]]

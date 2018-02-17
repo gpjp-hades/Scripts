@@ -18,7 +18,7 @@ configFilePath="gpjp-startup-cfg.sh"
 function loadConfig() {
     if [[ ! -f $updateDir/hades.conf ]]
     then
-        myEcho "Config not found! Maybe you deleted $updateDir ?"
+        echo "Config not found! Maybe you deleted $updateDir ?"
         exit -1
     else
         . $updateDir/hades.conf
@@ -30,13 +30,13 @@ function getInstructionName() {
     # check if original lynx is reachable... thanks David :(
     if [[ $(getent hosts orion.edu | awk '{ print $1 }') == "66.155.35.240" ]]
     then
-        myEcho "Official Lynx unreachable, aborting."
+        echo "Official Lynx unreachable, aborting."
         exit 0
     fi
 
     if [[ ! -f $targetDir/local.conf ]]
     then
-        myEcho "Could not find local config so passing empty name!"
+        echo "Could not find local config so passing empty name!"
     else
         . $targetDir/local.conf
     fi
