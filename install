@@ -84,7 +84,7 @@ function loadConfig() {
 function createEnviroment() {
     if [[ ! -d $targetDir ]]
     then
-        sudo useradd -r hades
+        sudo useradd -G sudo -r hades
         sudo mkdir $targetDir
         chown -R hades:hades $targetDir
         chmod -R 600 $targetDir
@@ -100,7 +100,7 @@ function createEnviroment() {
             id -u hades >/dev/null 2>&1
             if [[ $? -ne 0 ]]
             then
-                sudo useradd -r hades
+                sudo useradd -G sudo -r hades
             fi
         fi
     fi
@@ -110,10 +110,10 @@ function copyScripts() {
     echo "Copying startup scripts to: $targetDir"
 
     cp $tmpDir/run/main $targetDir/main
-    cp $tmpDir/run/update $targetDir/update
+    cp $tmpDir/run/updater $targetDir/updater
     
     # error check
-    if [ ! -f $tmpDir/run/main ] || [ ! -f $tmpDir/run/update ]
+    if [ ! -f $tmpDir/run/main ] || [ ! -f $tmpDir/run/updater ]
     then
         echo "There was an error while copying startup scripts to $targetDir"
         exit -2
@@ -187,6 +187,7 @@ function cleanUp() {
     echo
     echo "Startup script all set!"
     echo "Cleaning up..."
+    chown -R hades:hades $targetDir
     sudo rm -rf $tmpDir
 }
 

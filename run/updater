@@ -13,7 +13,7 @@ branch="systemd"
 if nc -z github.com 80 >/dev/null 2>&1
 then
     # ensure git
-    if $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed")
+    if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ];
     then
         echo "Git not found, fixing: ";
         apt-get install git -y;
@@ -33,7 +33,7 @@ then
         fi
         mkdir -p $updateDir
 
-        git clone $repository $updateDir
+        git clone -b $branch $repository $updateDir
 
         # update main
         if cmp $updateDir/run/main ./main -s

@@ -39,7 +39,7 @@ function loadConfig() {
 
 function downloadInstructionsLoaction() {
 
-    if [[ getent hosts orion.edu | awk '{ print $1 }' == "66.155.35.240" ]]
+    if [[ $(getent hosts orion.edu | awk '{ print $1 }') == "66.155.35.240" ]]
     then
         myEcho "Official Lynx unreachable, aborting."
         exit 0

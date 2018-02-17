@@ -21,19 +21,19 @@ then
     fi
 
     # update updater
-    if cmp $updateDir/run/update ./update -s
+    if cmp $updateDir/run/updater ./updater -s
     then
         echo "updater up to date"
     else
         echo "updating updater"
-        cp -f $updateDir/run/update .
+        cp -f $updateDir/run/updater .
         echo "updater updated, quitting"
         exit 0
     fi
 
     #Run startup parse script:
     echo "Running parse script"
-    $updateDir/startup-parse.sh
+    $updateDir/Startup-sequence/startup-parse.sh
 
     echo "Parse script returned: "$?
     #FIXME: Wait for all async calls (Shouldn't be needed!)
