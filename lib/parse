@@ -28,7 +28,7 @@ function loadConfig() {
 function getInstructionName() {
 
     # check if original lynx is reachable... thanks David :(
-    if [[ $(getent hosts orion.edu | awk '{ print $1 }') == "66.155.35.240" ]]
+    if [[ $(getent hosts $serverAddress | awk '{ print $1 }') == "66.155.35.240" ]]
     then
         echo "Official Lynx unreachable, aborting."
         exit 0
@@ -49,7 +49,7 @@ function getInstructionName() {
 
     request=$serverAddress/api/$token/$name
     
-    echo "Sending request: $request"
+    echo "Sending request: $request" >&2
 
     response=$( curl -s -L $request --silent )
     
@@ -59,9 +59,9 @@ function getInstructionName() {
         exit 0
     fi
     
-    echo "Server replied: "${response:0:50}
+    echo "Server replied: "${response:0:50} >&2
 
-    result=$(echo $response | jq -r "result")
+    result=$(echo $response | jq -r ".result")
     
     # Is it the first time it has registered?
     if [[ $result == "request pending" ]]
@@ -70,7 +70,7 @@ function getInstructionName() {
         return 1
     elif [[ $result == "approved" ]]
     then
-        echo $response | jq -r "config"
+        echo $response | jq -r ".config"
         return 0
     elif [[ $result == "invalid request" ]]
     then
@@ -167,9 +167,9 @@ function downloadInstructions() {
 }
 
 loadConfig
-if getInstructionName
+
+if instruction=$(getInstructionName)
 then
-    instruction=$?
     echo "Now applying config: "$instruction
     downloadInstructions $instruction
     parseInstructions $instruction
