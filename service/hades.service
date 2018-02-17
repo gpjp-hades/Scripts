@@ -10,7 +10,7 @@ Group=hades
 
 WorkingDirectory=/opt/hades
 
-ExecStartPre=-/bin/bash /opt/hades/update
+ExecStartPre=-/bin/bash /opt/hades/updater
 ExecStart=/bin/bash /opt/hades/main
 
 Restart=no

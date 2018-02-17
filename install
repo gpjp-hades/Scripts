@@ -86,8 +86,9 @@ function createEnviroment() {
     then
         sudo useradd -G sudo -r hades
         sudo mkdir $targetDir
+        # just in case ;)
         chown -R hades:hades $targetDir
-        chmod -R 600 $targetDir
+        chmod -R 700 $targetDir
     else
         printf "Target directory not empty. Proceed? [y/N]: "
         read -n 1 -r
@@ -188,6 +189,7 @@ function cleanUp() {
     echo "Startup script all set!"
     echo "Cleaning up..."
     chown -R hades:hades $targetDir
+    chmod -R 700 $targetDir
     sudo rm -rf $tmpDir
 }
 
