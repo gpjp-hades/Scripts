@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-#title           :uninstall.sh
+#title           :uninstall
 #description     :This script will uninstall HADES system from computer.
 #author		     :horovtom, keombre
 #version         :0.1
-#usage		     :bash uninstall.sh [-a]
+#usage		     :bash uninstall [-a] [-h]
 #notes           :-a switch will delete all local user settings
 #=============================================================================
 
@@ -16,6 +16,7 @@ function deinstall() {
     
     #Remove scripts:
     sudo systemctl disable hades
+    sudo systemctl stop hades
     sudo rm -f /etc/systemd/system/hades.service
     sudo rm -f /etc/systemd/system/hades.timer
     sudo systemctl daemon-reload

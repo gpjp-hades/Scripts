@@ -20,6 +20,12 @@ then
         exit -4
     fi
 
+    if [[ ! -d $updateDir/.git ]]
+    then
+        echo "Repository not found in: "$updateDir" Quitting."
+        exit -1
+    fi
+
     # update updater
     if cmp $updateDir/run/updater ./updater -s
     then
@@ -33,7 +39,7 @@ then
 
     #Run startup parse script:
     echo "Running parse script"
-    $updateDir/Startup-sequence/startup-parse.sh
+    $updateDir/lib/parse
 
     echo "Parse script returned: "$?
     #FIXME: Wait for all async calls (Shouldn't be needed!)

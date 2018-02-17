@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+#title           :parse
+#description     :This script will download parse config file and send commands to startup-execute.sh.
+#author		     :horovtom, keombre
+#version         :0.1
+#notes           :
+#==============================================================================
+
+targetDir="/opt/hades"
+updateDir=$targetDir/Update
+repoDir=$targetDir/Instructions
+
+name=""
+#This is being overwriten by config file on GIT
+logFile="/tmp/gpjp-startup.log"
+configFilePath="gpjp-startup-cfg.sh"
+
+function loadConfig() {
+    if [[ ! -f $updateDir/hades.conf ]]
+    then
+        myEcho "Config not found! Maybe you deleted $updateDir ?"
+        exit -1
+    else
+        . $updateDir/hades.conf
+    fi
+}
+
+function getConfigName() {
+
+    # check if original lynx is reachable... thanks David :(
+    if [[ $(getent hosts orion.edu | awk '{ print $1 }') == "66.155.35.240" ]]
+    then
+        myEcho "Official Lynx unreachable, aborting."
+        exit 0
+    fi
+
+    if [[ ! -f $targetDir/local.conf ]]
+    then
+        myEcho "Could not find local config so passing empty name!"
+    else
+        . $targetDir/local.conf
+    fi
+    
+    # primitive url encode
+    name="${name//' '/%20}"
+    
+    token=$(uuidgen)
+    request=$serverAddress/api/$token/$name
+    
+    echo "Sending request: $request"
+
+    response=$( curl -s -L $request --silent )
+    
+    if [[ "$response" == "" ]]
+    then
+        echo "Server error. Quitting."
+        exit 0
+    fi
+    
+    echo "Server replied: "${response:0:50}
+
+    result=$(echo $response | jq -r "result")
+    
+    # Is it the first time it has registered?
+    if [[ $result == "request pending" ]]
+    then
+        echo "Nothing to do! Waiting for admin to approve this machine in system"
+        return 1
+    elif [[ $result == "approved" ]]
+    then
+        echo $response | jq -r "config"
+        return 0
+    elif [[ $result == "invalid request" ]]
+    then
+        echo "Communication error. Local version probably outdated."
+        return -1
+    elif [[ $result == "request denied" ]]
+    then
+        echo "System not approved. Contact system administrator for further help."
+        exit -2
+    else
+        echo "Communication error. Local version probably outdated. Truncated response: "${response:0:50}
+        exit -3
+    fi
+}
+
+function parseInstructions() {
+    # left this mostly intact (have no idea how it works) -keombre
+
+    #Workaround for the weird ~/ bug
+    oldPath=$( pwd )
+    cd /tmp/
+    instructions=$repoDir/$1
+    
+    currentMode="D"
+    
+    #IFS='' prevents leading/trailing whitespace from being trimmed
+    #-r prevents backslash escapes from being interpreted
+    #|| [[ -n $line ]] prevents the last line from being ignored if it doesn't end with a \n
+    while IFS='' read -r line || [[ -n "$line" ]]; do
+        echo "Line to parse was: $line"
+        #Is first char '#'? Then it is a comment, not to be interpreted
+        if [[ $line == "" || $( echo $line | head -c 1 ) == '#' ]] ; then
+            continue
+        fi
+        #myEcho "Line: $line"
+        if [ $( echo $line | head -c 1 ) == '[' ] ; then
+            #It is a change-mode command!
+            case "$line" in
+                "[install]")
+                    echo "Switching mode to install"
+                    local currentMode="I"
+                ;;
+                "[single]")
+                    echo "Switching mode to single"
+                    local currentMode="S"
+                ;;
+                "[routine-root]")
+                    echo "Switching mode to routine-root"
+                    local currentMode="Rr"
+                ;;
+                "[routine]")
+                    echo "Switching mode to routine"
+                    local currentMode="R"
+                ;;
+                *)
+                    echo "I dont know this change-mode command: $line"
+                ;;
+            esac
+        else
+            #It has to be a command:
+            sudo $updateDir/lib/run $currentMode "$line"
+        fi
+    done < "$instructions"
+    
+    echo "DONE parsing"
+    #One-time carry out instructions should be labeled by ID... This ID will be timeStamp of creation of command. Each computer will hold a list of ID's that it had carried out already. Any new one will be carried out.
+    #This allows admin to enter one-time carry out instruction multiple times, even after it had been carried out.
+    #We will probably need an application to manage these config files, so user does not have to add timestamp by hand every time.
+    #time in seconds since epoch will be used as an timestamp. Command to get this in bash is:
+    # date +%s
+    cd $oldPath
+    return
+}
+
+function downloadInstructions() {
+
+    if [[ -d $repoDir ]] && [[ ! -d $repoDir/.git ]]
+    then
+        rm -r $repoDir
+    fi
+    
+    if [[ -d $repoDir/.git ]]
+    then
+        git -C $repoDir pull
+    else
+        git clone http://github.com/gpjp-hades/Instructions $repoDir
+    fi
+
+    if [[ ! -f $repoDir/$1 ]]
+    then
+        echo "Instruction: "$1" not found in "$repoDir
+        exit -4
+    fi
+}
+
+loadConfig
+if getInstructionName
+then
+    instruction=$?
+    echo "Now applying config: "$instruction
+    downloadInstructions $instruction
+    parseInstructions $instruction
+fi

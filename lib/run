@@ -1,29 +1,26 @@
 #!/usr/bin/env bash
-#title           :startup-execute.sh
+#title           :run
 #description     :This script will execute on boot-sequence and get config from server, then pass it to startup-parse.sh
 #author		     :horovtom
 #date            :1506032671
 #version         :0.1
-#usage		     :bash startup-execute.sh
 #notes           :
 #==============================================================================
 
 #This is being overwriten by config file on GIT
 logFile="/tmp/gpjp-startup.log"
-configFilePath="gpjp-startup-cfg.sh"
+configFilePath="hades.conf"
 targetDir="/opt/hades"
 updateDir="$targetDir/Update"
-
-
 
 function myEcho() {
     #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     local scriptLocation="startup-execute.sh"
     if [ "$logFile" == "" ] ; then
-        echo $scriptLocation": $1" >> /tmp/hades-unconfigured.log
+        #echo $scriptLocation": $1" >> /tmp/hades-unconfigured.log
         echo $scriptLocation": $1"
     else
-        echo $scriptLocation": $1" >> $logFile
+        #echo $scriptLocation": $1" >> $logFile
         echo $scriptLocation": $1"
     fi
 }
@@ -90,12 +87,12 @@ function loadConfig() {
         exit -1
     fi
     
-    source $updateDir/$configFilePath
+    . $updateDir/$configFilePath
 
     if [ ! -f $targetDir/local.conf ] ; then
         myEcho "Could not find local settings file! Maybe you deleted $targetDir/local.conf"
     else 
-        source $targetDir/local.conf
+        . $targetDir/local.conf
     fi
 }
 

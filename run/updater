@@ -15,12 +15,11 @@ then
     # ensure privliegies
     sudo chown -R hades:hades .
     sudo chmod -R 700 .
-    
-    # ensure git
-    if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ];
-    then
-        echo "Git not found, fixing: ";
-        sudo apt-get install git -y;
+
+    # ensure git and curl
+    if ! dpkg -s git curl jq >/dev/null 2>&1
+        echo "Git, curl or jq not found, fixing: ";
+        sudo apt-get install git curl -y;
     fi
 
     # get latest commit
