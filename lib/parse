@@ -25,7 +25,7 @@ function loadConfig() {
     fi
 }
 
-function getConfigName() {
+function getInstructionName() {
 
     # check if original lynx is reachable... thanks David :(
     if [[ $(getent hosts orion.edu | awk '{ print $1 }') == "66.155.35.240" ]]
