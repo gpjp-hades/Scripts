@@ -11,6 +11,23 @@ repository="git://github.com/gpjp-hades/Scripts.git"
 updateDir="Remote"
 branch="systemd"
 
+function updateFile() {
+    if [[ $2 ]]
+    then
+        name=$2
+    else
+        name=$1
+    fi
+
+    if cmp $updateDir/$1 $name -s
+    then
+        echo $name" up to date"
+    else
+        echo "updating "$name
+        cp -f $updateDir/$1 $name
+    fi
+}
+
 if nc -z github.com 80 >/dev/null 2>&1
 then
     # ensure privliegies
@@ -21,7 +38,7 @@ then
     if ! dpkg -s git curl jq >/dev/null 2>&1
     then
         echo "Git, curl or jq not found, fixing: "
-        sudo apt-get install git curl -y
+        sudo apt-get install git curl jq -y
     fi
 
     # get latest commit
@@ -49,34 +66,14 @@ then
             exit -4
         fi
 
-        # update main
-        if cmp $updateDir/run/main ./main -s
-        then
-            echo "main up to date"
-        else
-            echo "updating main"
-            cp -f $updateDir/run/main .
-        fi
+        updateFile run/main main
+        updateFile hades.conf
+        
+        updateFile /service/hades.service /etc/systemd/system/hades.service
+        updateFile /service/hades.timer /etc/systemd/system/hades.timer
 
-        # update config
-        if cmp $updateDir/hades.conf ./hades.conf -s
-        then
-            echo "config up to date"
-        else
-            echo "updating config"
-            cp -f $updateDir/hades.conf .
-        fi
-        # update service
-        if cmp $updateDir/service/hades.service /etc/systemd/system/hades.service -s ||
-           cmp $updateDir/service/hades.timer /etc/systemd/system/hades.timer -s
-        then
-            echo "service up to date"
-        else
-            echo "updating service"
-            cp -f $updateDir/service/hades.service /etc/systemd/system
-            cp -f $updateDir/service/hades.timer /etc/systemd/system
-            systemctl daemon-reload
-        fi
+        updateFile lib/parse parse
+        updateFile lib/run run
 
         # update command (probably not needed, since we have service)
         if cmp $updateDir/run/hades /usr/bin/hades -s

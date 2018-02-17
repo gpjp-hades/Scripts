@@ -7,29 +7,13 @@
 #notes           :
 #==============================================================================
 
-#This is being overwriten by config file on GIT
-logFile="/tmp/gpjp-startup.log"
-configFilePath="hades.conf"
 targetDir="/opt/hades"
-updateDir=$targetDir/Remote
-
-function myEcho() {
-    #FIXME: scriptLocation="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-    local scriptLocation="startup-execute.sh"
-    if [ "$logFile" == "" ] ; then
-        #echo $scriptLocation": $1" >> /tmp/hades-unconfigured.log
-        echo $scriptLocation": $1"
-    else
-        #echo $scriptLocation": $1" >> $logFile
-        echo $scriptLocation": $1"
-    fi
-}
 
 function installMode() {
-    myEcho "Installing: $1"
+    echo "Installing: $1"
 
     local output=$( sudo apt-get install $1 -y )
-    myEcho "$output"
+    echo "$output"
 }
 
 function addToExecuted() {
@@ -42,73 +26,73 @@ function alreadyExecuted() {
 }
 
 function singleMode() {
-    myEcho "Singleing: $1"
+    echo "Singleing: $1"
     #Get first word (should be ID)
     local commandID=$( awk '{print $1}' <<< $1 )
     if ! [[ $commandID =~ ^-?[0-9]+$ ]] ; then
-        myEcho "Wrong syntax for singleMode. Expected ID, got: $commandID"
+        echo "Wrong syntax for singleMode. Expected ID, got: $commandID"
         exit -2
     fi
     alreadyExecuted $commandID
     if [[ $? -ne 0 ]] ; then
         local commandToExec=$( echo $1 | cut -d " " -f2- )
-        myEcho "Executing $commandToExec"
+        echo "Executing $commandToExec"
         output=$( sudo bash -c "$commandToExec" )
 
-        myEcho "$output"
+        echo "$output"
 
         addToExecuted $commandID
     else
-        myEcho "Command $commandID has been already executed on this machine"
+        echo "Command $commandID has been already executed on this machine"
     fi
 }
 
 function routineMode() {
-    myEcho "Routining: $1 as $defaultUser"
+    echo "Routining: $1 as $defaultUser"
     #We have to substitute all '"' for '\"', because of the nested bash calls
     local g="\""
     local h="\\\""
     local result=\"${1//$g/$h}\"
     output=$( sudo su -c "bash -c \"\"$result\"\"" $defaultUser )
 
-    myEcho "$output"
+    echo "$output"
 }
 
 function routineRootMode() {
-    myEcho "Routining as root: $1"
+    echo "Routining as root: $1"
     output=$( sudo bash -c "$1" )
 
-    myEcho "$output"
+    echo "$output"
 }
 
 function loadConfig() {
-    if [ ! -f $updateDir/$configFilePath ] ; then
-        myEcho "Config not found! Maybe you deleted $updateDir ?"
+    if [[ ! -f $targetDir/hades.conf ]]
+    then
+        echo "Config not found in "$targetDir"/hades.conf"
         exit -1
+    else
+        . $targetDir/hades.conf
     fi
-    
-    . $updateDir/$configFilePath
-
-    if [ ! -f $targetDir/local.conf ] ; then
-        myEcho "Could not find local settings file! Maybe you deleted $targetDir/local.conf"
-    else 
+    if [[ ! -f $targetDir/local.conf ]]
+    then
+        echo "Config not found in "$targetDir"/local.conf"
+        exit -1
+    else
         . $targetDir/local.conf
     fi
 }
-
-
 
 loadConfig
 
 
 #Check number of args:
 if [[ $# -ne 2 ]] ; then
-    myEcho "ERROR: I got wrong number of args: $#"
+    echo "ERROR: I got wrong number of args: $#"
     exit -1
 fi
 
 
-myEcho "I got parameters: $1 $2"
+echo "I got parameters: $1 $2"
 
 case "$1" in
     "I")
@@ -124,10 +108,10 @@ case "$1" in
         routineMode "$2"
     ;;
     *)
-        myEcho "I don't know mode: $1, skipping"
+        echo "I don't know mode: $1, skipping"
     ;;
 esac
 
-myEcho "--Command Done--"
-myEcho ""
+echo "--Command Done--"
+echo ""
 

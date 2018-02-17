@@ -1,5 +1,6 @@
 [Unit]
 Description=Hourly Hades update
+After=network-online.target
 
 [Timer]
 OnBootSec=10min

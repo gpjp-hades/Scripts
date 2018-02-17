@@ -6,24 +6,7 @@
 #notes           :
 #==============================================================================
 
-targetDir="/opt/hades"
-updateDir=$targetDir/Remote
 repoDir=$targetDir/Instructions
-
-name=""
-#This is being overwriten by config file on GIT
-logFile="/tmp/gpjp-startup.log"
-configFilePath="gpjp-startup-cfg.sh"
-
-function loadConfig() {
-    if [[ ! -f $updateDir/hades.conf ]]
-    then
-        echo "Config not found! Maybe you deleted $updateDir ?"
-        exit -1
-    else
-        . $updateDir/hades.conf
-    fi
-}
 
 function getInstructionName() {
 
@@ -32,13 +15,6 @@ function getInstructionName() {
     then
         echo "Official Lynx unreachable, aborting."
         exit 0
-    fi
-
-    if [[ ! -f $targetDir/local.conf ]]
-    then
-        echo "Could not find local config so passing empty name!"
-    else
-        . $targetDir/local.conf
     fi
     
     # primitive url encode
@@ -90,8 +66,8 @@ function parseInstructions() {
     # left this mostly intact (have no idea how it works) -keombre
 
     #Workaround for the weird ~/ bug
-    oldPath=$( pwd )
-    cd /tmp/
+    #oldPath=$( pwd )
+    #cd /tmp/
     instructions=$repoDir/$1
     
     currentMode="D"
@@ -131,7 +107,7 @@ function parseInstructions() {
             esac
         else
             #It has to be a command:
-            sudo $updateDir/lib/run $currentMode "$line"
+            sudo bash run $currentMode "$line"
         fi
     done < "$instructions"
     
@@ -141,8 +117,8 @@ function parseInstructions() {
     #We will probably need an application to manage these config files, so user does not have to add timestamp by hand every time.
     #time in seconds since epoch will be used as an timestamp. Command to get this in bash is:
     # date +%s
-    cd $oldPath
-    return
+    #cd $oldPath
+    #return
 }
 
 function downloadInstructions() {
@@ -165,8 +141,6 @@ function downloadInstructions() {
         exit -4
     fi
 }
-
-loadConfig
 
 if instruction=$(getInstructionName)
 then

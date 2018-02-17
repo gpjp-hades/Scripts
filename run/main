@@ -6,19 +6,26 @@
 #notes           :This script will take existing gpjp-config clone from gpjp-startup-updater.sh
 #==============================================================================
 
-updateDir="Remote"
+targetDir="/opt/hades" # probably not needed, since systemd puts us here already 
+updateDir=$targetDir/Remote
+
+function loadConfig() {
+    if [[ ! -f $1 ]]
+    then
+        echo "Config not found in "$targetDir/$1
+        exit -1
+    else
+        . $1
+    fi
+}
 
 #check connectivity
 if nc -z github.com 80 >/dev/null 2>&1
 then
-    # get config
-    if [[ -f "hades.conf" ]]
-    then
-        . hades.conf
-    else
-        echo "config not found; quitting"
-        exit -4
-    fi
+
+    # get configs (since we will be sourcing all other scripts, we need to do this only once)
+    loadConfig hades.conf
+    loadConfig local.conf
 
     if [[ ! -d $updateDir/.git ]]
     then
@@ -37,9 +44,12 @@ then
         exit 0
     fi
 
+    echo "Update finished, cleanup..."
+    rm -rf Remote
+
     #Run startup parse script:
     echo "Running parse script"
-    $updateDir/lib/parse
+    . parse # sourcing to preserve environment (probably solves that sleep mess down below)
 
     echo "Parse script returned: "$?
     #FIXME: Wait for all async calls (Shouldn't be needed!)

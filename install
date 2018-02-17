@@ -48,7 +48,7 @@ function download() {
     if ! dpkg -s git curl jq >/dev/null 2>&1
     then
         echo "Git, curl or jq not found, fixing: "
-        sudo apt-get install git curl -y
+        sudo apt-get install git jq curl -y
     fi
     
     # wipe temp dir
@@ -111,6 +111,8 @@ function copyScripts() {
 
     cp $tmpDir/run/main $targetDir/main
     cp $tmpDir/run/updater $targetDir/updater
+    cp $tmpDir/lib/parse $targetDir/parse
+    cp $tmpDir/lib/run $targetDir/run
     
     # error check
     if [ ! -f $tmpDir/run/main ] || [ ! -f $tmpDir/run/updater ]
